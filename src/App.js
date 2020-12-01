@@ -32,33 +32,33 @@ const App = () => {
       const { ethereum } = window;
 
       if (!!ethereum) {
-        const accounts = await ethereum.enable();
+        const accounts = await ethereum.request({
+          method: "eth_requestAccounts",
+        });
 
         setAddress(accounts[0]);
       }
 
-      // console.log('ethereum ', ethereum)
-
-      console.log("current provider ", Web3.givenProvider);
     } catch (e) {
       console.log("something went wrong ", e);
     }
   };
 
   const handleSubmit = async (values) => {
-    console.log("inside handle submit ", values);
 
-    console.log("address ", address);
-
+    if(!address) {
+      alert('Please connect to metamask first')
+      return;
+    }
+    
     const { value } = values;
-    console.log("value ", parseInt(value));
 
     const gasPrice = await web3.eth.getGasPrice();
 
     setLoading(true);
 
     usdcContract.methods
-      .approve(bridgeAddress, parseInt(values.value))
+      .approve(bridgeAddress, parseInt(value))
       .send({
         from: address,
         gas: 450000,
@@ -80,7 +80,7 @@ const App = () => {
       })
       .then(() => {
         brigeContract.methods
-          .sendToken(parseInt(values.value))
+          .sendToken(parseInt(value))
           .send({
             from: address,
             gas: 450000,
@@ -104,8 +104,6 @@ const App = () => {
           });
       });
   };
-
-  console.log("address ", address);
 
   return (
     <div className="form-container">
