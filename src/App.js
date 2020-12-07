@@ -124,13 +124,17 @@ const App = () => {
             <div>
               <ErrorMessage name="value" />
             </div>
-            <div>
+            {
+              /* 
+              <div>
               <Field as="select" name="token">
                 <option value="USDT">USDT</option>
                 <option value="USDC">USDC</option>
                 <option value="DAI">DAI</option>
               </Field>
             </div>
+              */
+            }
             <div>
               <ErrorMessage name="token" />
             </div>

@@ -221,7 +221,7 @@ export const bridgeAbi = [
       { internalType: "uint256", name: "amount", type: "uint256" },
     ],
     name: "approvePoolBalance",
-    outputs: [],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -356,6 +356,22 @@ export const bridgeAbi = [
         name: "_uniswapRouterContractAddress",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "_max_withdrawal_period_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_max_withdrawal_period",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_max_withdrawal_allowed",
+        type: "uint256",
+      },
+      { internalType: "uint256", name: "_min_eth_required", type: "uint256" },
     ],
     name: "initialize",
     outputs: [],
@@ -402,17 +418,6 @@ export const bridgeAbi = [
     name: "last_withdrawal_time",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "address[]", name: "_owners", type: "address[]" },
-      { internalType: "uint256", name: "_required", type: "uint256" },
-      { internalType: "uint256", name: "_required_secure", type: "uint256" },
-    ],
-    name: "linkInitialize",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -559,6 +564,16 @@ export const bridgeAbi = [
     type: "function",
   },
   {
+    inputs: [
+      { internalType: "address payable", name: "account", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "sendEther",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
     name: "sendToken",
     outputs: [],
@@ -591,6 +606,6 @@ export const bridgeAbi = [
   { stateMutability: "payable", type: "receive" },
 ];
 
-export const usdcAddress = '0x0D9C8723B343A8368BebE0B5E89273fF8D712e3C'
+export const usdcAddress = "0x0D9C8723B343A8368BebE0B5E89273fF8D712e3C";
 
-export const bridgeAddress = '0x7Af057FF724545129E8CE029eE42A54c422293E8'
+export const bridgeAddress = "0xb151141C40146362356d65B3C7a587551f81c5B6";
