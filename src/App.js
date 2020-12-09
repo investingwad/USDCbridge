@@ -14,7 +14,7 @@ const schema = Yup.object().shape({
 });
 
 const initialValues = {
-  value: 1,
+  value: "",
   token: "USDC",
 };
 
@@ -31,20 +31,28 @@ const App = () => {
 
       const { ethereum } = window;
 
-      if (!!ethereum) {
-        const accounts = await ethereum.request({
-          method: "eth_requestAccounts",
-        });
+      console.log("ethereum ", ethereum);
 
-        setAddress(accounts[0]);
+      const { chainId } = ethereum;
+
+      if (chainId === "0x3") {
+        if (!!ethereum) {
+          const accounts = await ethereum.request({
+            method: "eth_requestAccounts",
+          });
+
+          setAddress(accounts[0]);
+        }
+      } else {
+        alert("Please select Ropsten test network then connect");
       }
-
     } catch (e) {
       console.log("something went wrong ", e);
     }
   };
 
   const handleSubmit = async (values) => {
+    console.log("values ", values);
 
     if(!address) {
       alert('Please connect to metamask first')
@@ -119,33 +127,34 @@ const App = () => {
         >
           <Form>
             <div>
-              <Field name="value" />
+              <Field name="value" placeholder="enter amount" />
             </div>
             <div>
               <ErrorMessage name="value" />
             </div>
-            {
-              /* 
-              <div>
+            <div>
               <Field as="select" name="token">
-                <option value="USDT">USDT</option>
                 <option value="USDC">USDC</option>
-                <option value="DAI">DAI</option>
               </Field>
             </div>
-              */
-            }
             <div>
               <ErrorMessage name="token" />
             </div>
             <div>
               <button type="submit" className="submit-btn" disabled={loading}>
-                {loading ? "Submitting" : "Submit"}
+                {loading ? "Sending Token" : "Send Token"}
               </button>
             </div>
           </Form>
         </Formik>
       </div>
+
+      <a
+        href="https://docs.google.com/document/u/1/d/14K6_DT-pqmBsAd3tLoHD-SKhPO1WCFW7unMKTMzxKx4/edit?usp=sharing"
+        target="_blank"
+      >
+        Click here for help
+      </a>
     </div>
   );
 };
