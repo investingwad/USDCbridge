@@ -15,7 +15,7 @@ const web3 = new Web3(Web3.givenProvider);
 const schema = Yup.object().shape({
   value: Yup.number()
     .required("Enter value of token")
-    .test("lowAmount", `Should be greater than 0`, (val) => parseInt(val) > 0),
+    .test("lowAmount", `Should be greater than 0`, (val) => parseFloat(val) > 0),
   token: Yup.string().required("Select a token type"),
 });
 
@@ -76,10 +76,17 @@ const App = () => {
 
     const contract = token === "USDC" ? usdcContract : daiContract;
 
+    const stakeAMount =
+      token === "USDC"
+        ? web3.utils.toWei(value, "mwei")
+        : web3.utils.toWei(value, "ether");
+
+    console.log("stakeAMount ", stakeAMount);
+
     setLoading(true);
 
     contract.methods
-      .approve(bridgeAddress, value)
+      .approve(bridgeAddress, stakeAMount)
       .send({
         from: address,
         gas: 450000,
@@ -101,7 +108,7 @@ const App = () => {
       })
       .then(() => {
         brigeContract.methods
-          .sendToken(parseInt(value), tokenId)
+          .sendToken(stakeAMount, tokenId)
           .send({
             from: address,
             gas: 450000,
