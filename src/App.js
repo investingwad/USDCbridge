@@ -1,12 +1,14 @@
 import * as Web3 from "web3";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { usdcAbi, usdcAddress, bridgeAbi, bridgeAddress } from "./abi";
+import {
+  usdcAddress,
+  bridgeAbi,
+  bridgeAddress,
+  daiAddress,
+  tokenAbi,
+} from "./abi";
 import { useState } from "react";
-
-const abc = require('./a.json')
-
-console.log('abc ', abc)
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -22,7 +24,8 @@ const initialValues = {
   token: "USDC",
 };
 
-const usdcContract = new web3.eth.Contract(abc['abi'], usdcAddress);
+const usdcContract = new web3.eth.Contract(tokenAbi, usdcAddress);
+const daiContract = new web3.eth.Contract(tokenAbi, daiAddress);
 const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
 
 const App = () => {
@@ -58,22 +61,24 @@ const App = () => {
   const handleSubmit = async (values) => {
     console.log("values ", values);
 
-    if(!address) {
-      alert('Please connect to metamask first')
+    if (!address) {
+      alert("Please connect to metamask first");
       return;
     }
-    
-    const { value } = values;
 
-    console.log('value ', value)
+    const { value, token } = values;
+
+    console.log("value ", value);
 
     const gasPrice = await web3.eth.getGasPrice();
 
+    const tokenId = token === "USDC" ? 0 : 1;
+
+    const contract = token === "USDC" ? usdcContract : daiContract;
+
     setLoading(true);
 
-    console.log('usdcContract ', usdcContract)
-
-    usdcContract.methods
+    contract.methods
       .approve(bridgeAddress, value)
       .send({
         from: address,
@@ -94,10 +99,9 @@ const App = () => {
         console.log("error approve", error);
         setLoading(false);
       })
-      /*
       .then(() => {
         brigeContract.methods
-          .sendToken(parseInt(value))
+          .sendToken(parseInt(value), tokenId)
           .send({
             from: address,
             gas: 450000,
@@ -120,7 +124,6 @@ const App = () => {
             setLoading(false);
           });
       });
-      */
   };
 
   return (
@@ -145,6 +148,7 @@ const App = () => {
             <div>
               <Field as="select" name="token">
                 <option value="USDC">USDC</option>
+                <option value="DAI">DAI</option>
               </Field>
             </div>
             <div>
