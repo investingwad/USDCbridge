@@ -4,6 +4,10 @@ import * as Yup from "yup";
 import { usdcAbi, usdcAddress, bridgeAbi, bridgeAddress } from "./abi";
 import { useState } from "react";
 
+const abc = require('./a.json')
+
+console.log('abc ', abc)
+
 const web3 = new Web3(Web3.givenProvider);
 
 const schema = Yup.object().shape({
@@ -18,7 +22,7 @@ const initialValues = {
   token: "USDC",
 };
 
-const usdcContract = new web3.eth.Contract(usdcAbi, usdcAddress);
+const usdcContract = new web3.eth.Contract(abc['abi'], usdcAddress);
 const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
 
 const App = () => {
@@ -61,12 +65,16 @@ const App = () => {
     
     const { value } = values;
 
+    console.log('value ', value)
+
     const gasPrice = await web3.eth.getGasPrice();
 
     setLoading(true);
 
+    console.log('usdcContract ', usdcContract)
+
     usdcContract.methods
-      .approve(bridgeAddress, parseInt(value))
+      .approve(bridgeAddress, value)
       .send({
         from: address,
         gas: 450000,
@@ -86,6 +94,7 @@ const App = () => {
         console.log("error approve", error);
         setLoading(false);
       })
+      /*
       .then(() => {
         brigeContract.methods
           .sendToken(parseInt(value))
@@ -111,6 +120,7 @@ const App = () => {
             setLoading(false);
           });
       });
+      */
   };
 
   return (
