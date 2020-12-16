@@ -256,7 +256,6 @@ const Eos = () => {
     } finally {
       setRegisterLoading(false);
     }
-    setRegisterLoading(true);
   };
 
   // getTokens();
