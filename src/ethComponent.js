@@ -21,7 +21,7 @@ const initialValues = {
 const usdcContract = new web3.eth.Contract(usdcAbi, usdcAddress);
 const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
 
-const App = () => {
+const Ethereum = () => {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState("");
 
@@ -119,7 +119,7 @@ const App = () => {
         {!!address ? "Connected" : "Connect to metamask"}
       </button>
 
-      <div>
+      <div className="tokenform">
         <Formik
           initialValues={initialValues}
           validationSchema={schema}
@@ -159,4 +159,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Ethereum;
