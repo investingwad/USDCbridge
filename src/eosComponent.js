@@ -51,10 +51,14 @@ const Eos = () => {
     setShow(false);
   };
 
-  const successModal = (username) => {
+  const successModal =async (username) => {
     setShow(false);
     setwalletConnected(true);
     setUsername(username);
+     const tokens = await getTokens();
+      if (tokens.length) {
+        await getBalance(tokens, username);
+      }
   };
 
   const getTokens = async () => {
@@ -75,54 +79,61 @@ const Eos = () => {
     return tokens;
   };
 
-  const getBalance = async (tokens) => {
-    try{
-    if (tokens.length) {
-      let userbal = [];
-      for (const symbol of tokens) {
-        const tokensData = {
-          code: "etheosmultok",
-          json: true,
-          limit: 1000,
-          lower_bound: username,
-          scope: symbol.split(",")[1],
-          table: "available",
-          table_key: "",
-          upper_bound: username,
-        };
-        const responses = await fetch(
-          "https://api.kylin.alohaeos.com/v1/chain/get_table_rows",
-          {
-            method: "post",
-            body: JSON.stringify(tokensData),
+  const getBalance = async (tokens, account) => {
+    try {
+      if (tokens.length) {
+        const userbal = [];
+        console.log('username----', account)
+        for (const symbol of tokens) {
+          const tokensData = {
+            code: "etheosmultok",
+            json: true,
+            limit: 1000,
+            scope: symbol.split(",")[1],
+            table: "available",
+            table_key: account,
+          };
+          const responses = await fetch(
+            "https://api.kylin.alohaeos.com/v1/chain/get_table_rows",
+            {
+              method: "post",
+              body: JSON.stringify(tokensData),
+            }
+          );
+
+          const tokensdata = await responses.json();
+          console.log("respose----", tokensdata);
+          if (tokensdata.rows.length) {
+            tokensdata.rows.map((row) => {
+              if (row.account == account) {
+                userbal.push(tokensdata.rows[0].balance);
+              }
+            });
           }
-        );
-        const tokensdata = await responses.json();
-        userbal.push(tokensdata.rows[0].balance);
+        }
+        console.log("userbalance ---", userbal);
+        setUserBalances(userbal);
       }
-      console.log("userbalance ---", userbal);
-      setUserBalances(userbal);
-    }
-    }catch(e){
-      console.log('errr---', e)
+    } catch (e) {
+      console.log("errr---", e);
     }
   };
 
   useEffect(() => {
+    getTokens();
     const connectWallet = async (walletType) => {
       try {
+        const tokens = await getTokens();
         await WalletProvider.login(walletType);
         const wallet = WalletProvider.getWallet();
         console.log("wallet----", wallet);
         if (!!wallet) {
           setUsername(wallet?.auth?.accountName);
           setwalletConnected(true);
-          const tokens = await getTokens();
-          if(tokens.length){
-            await getBalance(tokens)
+          if (tokens.length) {
+            await getBalance(tokens, wallet?.auth?.accountName);
           }
         }
-         
       } catch (e) {
         console.log("something went wrong ", e);
       }
@@ -147,16 +158,18 @@ const Eos = () => {
           await WalletProvider.disconnectWallet();
           localStorage.clear();
           setwalletConnected(false);
+          setUserBalances([]);
+          setUsername("");
         }
       } catch (e) {
         console.log("something went wrong ", e);
       }
     } else {
       setShow(true);
-      const tokens = await getTokens();
-      if(tokens.length){
-        await getBalance(tokens)
-      }
+      // const tokens = await getTokens();
+      // if (tokens.length) {
+      //   await getBalance(tokens);
+      // }
     }
   };
 
@@ -229,6 +242,8 @@ const Eos = () => {
             seterrorMsg("");
           }
         }
+      } else {
+        setRegisterLoading(false);
       }
     } catch (e) {
       console.log("err----", e);
@@ -290,6 +305,8 @@ const Eos = () => {
           setsuccessMsg("Transaction Success");
           seterrorMsg("");
         }
+      } else {
+        setLoading(false);
       }
     } catch (e) {
       console.log("error in treansferinng----", JSON.parse(JSON.stringify(e)));
