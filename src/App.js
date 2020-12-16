@@ -15,7 +15,11 @@ const web3 = new Web3(Web3.givenProvider);
 const schema = Yup.object().shape({
   value: Yup.number()
     .required("Enter value of token")
-    .test("lowAmount", `Should be greater than 0`, (val) => parseFloat(val) > 0),
+    .test(
+      "lowAmount",
+      `Should be greater than 0`,
+      (val) => parseFloat(val) > 0
+    ),
   token: Yup.string().required("Select a token type"),
 });
 
@@ -31,15 +35,103 @@ const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
 const App = () => {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState("");
+  const [checked, setChecked] = useState(false);
+
+  const sendToken = async (stakeAMount, tokenId) => {
+    console.log("inside send token");
+
+    setLoading(true);
+
+    brigeContract.methods
+      .sendToken(stakeAMount, tokenId)
+      .send({
+        from: address,
+      })
+      .on("transactionHash", (hash) => {
+        console.log("transactionHash  sendToken", hash);
+      })
+      .on("receipt", (receipt) => {
+        console.log("receipt sendToken", receipt);
+
+        setLoading(false);
+      })
+      .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmationNumber sendToken", confirmationNumber);
+        console.log("receipt sendToken", receipt);
+      })
+      .on("error", (error) => {
+        console.log("error sendToken", error);
+        setLoading(false);
+      });
+  };
+
+  const approveAndSendToken = async (stakeAMount, tokenId, token) => {
+    console.log("inside approve and send token");
+
+    setLoading(true);
+
+    const contract = token === "USDC" ? usdcContract : daiContract;
+
+    let approvedAmount = "";
+
+    if (checked) {
+      approvedAmount =
+        token === "USDC"
+          ? web3.utils.toWei("10000000000000000", "mwei")
+          : web3.utils.toWei("10000000000000000", "ether");
+    } else {
+      approvedAmount = stakeAMount;
+    }
+
+    console.log("approved amount ", approvedAmount);
+
+    contract.methods
+      .approve(bridgeAddress, approvedAmount)
+      .send({
+        from: address,
+      })
+      .on("transactionHash", (hash) => {
+        console.log("transactionHash approve ", hash);
+      })
+      .on("receipt", (receipt) => {
+        console.log("receipt approve", receipt);
+      })
+      .on("confirmation", (confirmationNumber, receipt) => {
+        console.log("confirmationNumber approve", confirmationNumber);
+        console.log("receipt approve", receipt);
+      })
+      .on("error", (error) => {
+        console.log("error approve", error);
+        setLoading(false);
+      })
+      .then(() => {
+        brigeContract.methods
+          .sendToken(stakeAMount, tokenId)
+          .send({
+            from: address,
+          })
+          .on("transactionHash", (hash) => {
+            console.log("transactionHash  sendToken", hash);
+          })
+          .on("receipt", (receipt) => {
+            console.log("receipt sendToken", receipt);
+
+            setLoading(false);
+          })
+          .on("confirmation", (confirmationNumber, receipt) => {
+            console.log("confirmationNumber sendToken", confirmationNumber);
+            console.log("receipt sendToken", receipt);
+          })
+          .on("error", (error) => {
+            console.log("error sendToken", error);
+            setLoading(false);
+          });
+      });
+  };
 
   const connectToMetamask = async () => {
     try {
-      console.log("connecting to metamask");
-
       const { ethereum } = window;
-
-      console.log("ethereum ", ethereum);
-
       const { chainId } = ethereum;
 
       if (chainId === "0x3") {
@@ -70,8 +162,6 @@ const App = () => {
 
     console.log("value ", value);
 
-    const gasPrice = await web3.eth.getGasPrice();
-
     const tokenId = token === "USDC" ? 0 : 1;
 
     const contract = token === "USDC" ? usdcContract : daiContract;
@@ -83,55 +173,20 @@ const App = () => {
 
     console.log("stakeAMount ", stakeAMount);
 
-    setLoading(true);
+    const approvedAmount = await contract.methods
+      .allowance(address, bridgeAddress)
+      .call();
 
-    contract.methods
-      .approve(bridgeAddress, stakeAMount)
-      .send({
-        from: address,
-        gas: 450000,
-        gasPrice,
-      })
-      .on("transactionHash", (hash) => {
-        console.log("transactionHash approve ", hash);
-      })
-      .on("receipt", (receipt) => {
-        console.log("receipt approve", receipt);
-      })
-      .on("confirmation", (confirmationNumber, receipt) => {
-        console.log("confirmationNumber approve", confirmationNumber);
-        console.log("receipt approve", receipt);
-      })
-      .on("error", (error) => {
-        console.log("error approve", error);
-        setLoading(false);
-      })
-      .then(() => {
-        brigeContract.methods
-          .sendToken(stakeAMount, tokenId)
-          .send({
-            from: address,
-            gas: 450000,
-            gasPrice,
-          })
-          .on("transactionHash", (hash) => {
-            console.log("transactionHash  sendToken", hash);
-          })
-          .on("receipt", (receipt) => {
-            console.log("receipt sendToken", receipt);
+    console.log('approvedAmount in contract ', approvedAmount)
 
-            setLoading(false);
-          })
-          .on("confirmation", (confirmationNumber, receipt) => {
-            console.log("confirmationNumber sendToken", confirmationNumber);
-            console.log("receipt sendToken", receipt);
-          })
-          .on("error", (error) => {
-            console.log("error sendToken", error);
-            setLoading(false);
-          });
-      });
+    if (approvedAmount > stakeAMount) {
+      sendToken(stakeAMount, tokenId);
+    } else {
+      approveAndSendToken(stakeAMount, tokenId, token);
+    }
   };
+
+  console.log("checked ", checked);
 
   return (
     <div className="form-container">
@@ -161,6 +216,15 @@ const App = () => {
             <div>
               <ErrorMessage name="token" />
             </div>
+            <label>
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={() => setChecked(!checked)}
+                disabled={loading}
+              />
+              <span>Infinite Approval</span>
+            </label>
             <div>
               <button type="submit" className="submit-btn" disabled={loading}>
                 {loading ? "Sending Token" : "Send Token"}
@@ -173,6 +237,7 @@ const App = () => {
       <a
         href="https://docs.google.com/document/u/1/d/14K6_DT-pqmBsAd3tLoHD-SKhPO1WCFW7unMKTMzxKx4/edit?usp=sharing"
         target="_blank"
+        rel="noreferrer"
       >
         Click here for help
       </a>

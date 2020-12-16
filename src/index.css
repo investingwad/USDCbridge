@@ -46,11 +46,28 @@ select {
 }
 
 .submit-btn {
-  margin-top: 60px;
+  margin-top: 20px;
   width: 100%;
   padding: 5px;
 }
 
 a {
   margin-top: 20px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+label input {
+  width: unset;
+  padding: 0;
+  margin: 0;
+}
+
+label span {
+  margin-left: 10px;
+  user-select: none;
 }
