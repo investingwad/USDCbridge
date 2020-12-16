@@ -51,14 +51,14 @@ const Eos = () => {
     setShow(false);
   };
 
-  const successModal =async (username) => {
+  const successModal = async (username) => {
     setShow(false);
     setwalletConnected(true);
     setUsername(username);
-     const tokens = await getTokens();
-      if (tokens.length) {
-        await getBalance(tokens, username);
-      }
+    const tokens = await getTokens();
+    if (tokens.length) {
+      await getBalance(tokens, username);
+    }
   };
 
   const getTokens = async () => {
@@ -83,7 +83,7 @@ const Eos = () => {
     try {
       if (tokens.length) {
         const userbal = [];
-        console.log('username----', account)
+        console.log("username----", account);
         for (const symbol of tokens) {
           const tokensData = {
             code: "etheosmultok",
@@ -179,7 +179,8 @@ const Eos = () => {
       const eosAmount = 1;
       // await WalletProvider.login(walletType);
       const wallet = WalletProvider.getWallet();
-
+      const { address } = values;
+      console.log("address----", address);
       if (!!wallet) {
         const result = await wallet.eosApi.transact(
           {
@@ -200,6 +201,20 @@ const Eos = () => {
                   memo: "registration fees",
                 },
               },
+              {
+                account: "etheosmultok",
+                name: "registereth",
+                authorization: [
+                  {
+                    actor: wallet.auth.accountName,
+                    permission: wallet.auth.permission,
+                  },
+                ],
+                data: {
+                  account: wallet.auth.accountName,
+                  ethaddress: address,
+                },
+              },
             ],
           },
           {
@@ -209,38 +224,9 @@ const Eos = () => {
           }
         );
         if (result) {
-          const { address } = values;
-          console.log("address----", address);
-          const result = await wallet.eosApi.transact(
-            {
-              actions: [
-                {
-                  account: "etheosmultok",
-                  name: "registereth",
-                  authorization: [
-                    {
-                      actor: wallet.auth.accountName,
-                      permission: wallet.auth.permission,
-                    },
-                  ],
-                  data: {
-                    account: wallet.auth.accountName,
-                    ethaddress: address,
-                  },
-                },
-              ],
-            },
-            {
-              broadcast: true,
-              blocksBehind: 3,
-              expireSeconds: 60,
-            }
-          );
-          if (result) {
-            setRegisterLoading(false);
-            setsuccessMsg("Transaction Success");
-            seterrorMsg("");
-          }
+          setRegisterLoading(false);
+          setsuccessMsg("Transaction Success");
+          seterrorMsg("");
         }
       } else {
         setRegisterLoading(false);
