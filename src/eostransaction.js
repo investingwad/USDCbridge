@@ -93,6 +93,7 @@ const EosTransaction = (props) => {
   };
 
   useEffect(()=>{
+    getTokens();
     const getbal = async()=>{
       const tokens = await getTokens();
       if(walletConnected && tokens.length){
