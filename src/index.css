@@ -18,7 +18,7 @@ code {
 }
 
 .form-container {
-    width: 30%;
+    width: 20%;
     margin: 0 auto;
     padding: 30px 30px 30px 30px;
     display: flex;
@@ -119,24 +119,25 @@ label input {
 
 .login {
     width: 100%;
-    display: inline-flex;
-    justify-content: space-between;
+    /* display: inline-flex;
+    justify-content: space-between; */
     padding: 10px;
 }
 
-.loginbtn {
+
+/* .loginbtn {
     width: 100px;
     margin: -2px;
     padding: 3px;
-}
+} */
 
 .registerbtn {
     margin-top: 36px;
 }
 
 .note {
-    font-size: 14px;
-    margin-top: 34px;
+    font-size: 13px;
+    margin-top: 10px;
     padding: 5px;
 }
 
@@ -157,9 +158,14 @@ label input {
 }
 
 .register {
-    width: 48%;
+    width: 100%;
 }
 
 .tokenform {
     width: 100%;
 }
+
+
+/* .userbalance {
+    display: inline-flex;
+} */

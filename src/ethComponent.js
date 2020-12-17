@@ -190,10 +190,12 @@ const Ethereum = () => {
 
   return (
     <div className="form-container">
+      <div>2. Send Tokens Ethereum to EOS</div>
+      <div className="login">
       <button onClick={connectToMetamask}>
         {!!address ? "Connected" : "Connect to metamask"}
       </button>
-
+    
       <div className="tokenform">
         <Formik
           initialValues={initialValues}
@@ -232,6 +234,7 @@ const Ethereum = () => {
             </div>
           </Form>
         </Formik>
+      </div>
       </div>
 
       <a
