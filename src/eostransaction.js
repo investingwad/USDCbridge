@@ -53,9 +53,9 @@ const EosTransaction = (props) => {
   };
  
   const getBalance = async (tokens, account) => {
+    const userbal = [];
     try {
       if (tokens.length) {
-        const userbal = [];
         console.log("username----", account);
         for (const symbol of tokens) {
           const tokensData = {
@@ -89,6 +89,7 @@ const EosTransaction = (props) => {
       }
     } catch (e) {
       console.log("errr---", e);
+      setUserBalances(userbal);
     }
   };
 
@@ -102,6 +103,9 @@ const EosTransaction = (props) => {
     }
     if(loggedIn){
      getbal()
+    }
+    if(!loggedIn){
+      setUserBalances([])
     }
   }, [loggedIn])
 

@@ -41,6 +41,7 @@ const Eos = (props) => {
           await WalletProvider.disconnectWallet();
           dispatch(logout())
           localStorage.clear();
+          props.toggleLogin(false)
         }
       } catch (e) {
         console.log("something went wrong ", e);
