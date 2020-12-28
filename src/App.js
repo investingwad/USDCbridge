@@ -7,6 +7,8 @@ import {
   bridgeAddress,
   daiAddress,
   tokenAbi,
+  dappBrigeAbi,
+  dappBrigeAddress,
 } from "./abi";
 import { useState } from "react";
 
@@ -31,6 +33,7 @@ const initialValues = {
 const usdcContract = new web3.eth.Contract(tokenAbi, usdcAddress);
 const daiContract = new web3.eth.Contract(tokenAbi, daiAddress);
 const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
+const dappContract = new web3.eth.Contract(dappBrigeAbi, dappBrigeAddress);
 
 const App = () => {
   const [address, setAddress] = useState("");
@@ -162,27 +165,55 @@ const App = () => {
 
     console.log("value ", value);
 
-    const tokenId = token === "USDC" ? 0 : 1;
+    console.log("token ", token);
 
-    const contract = token === "USDC" ? usdcContract : daiContract;
+    if (token === "DAPP") {
+      setLoading(true);
 
-    const stakeAMount =
-      token === "USDC"
-        ? web3.utils.toWei(value, "mwei")
-        : web3.utils.toWei(value, "ether");
+      dappContract.methods
+        .sendToken((parseFloat(value) * 1e4).toString())
+        .send({
+          from: address,
+        })
+        .on("transactionHash", (hash) => {
+          console.log("transactionHash  sendToken", hash);
+        })
+        .on("receipt", (receipt) => {
+          console.log("receipt sendToken", receipt);
 
-    console.log("stakeAMount ", stakeAMount);
-
-    const approvedAmount = await contract.methods
-      .allowance(address, bridgeAddress)
-      .call();
-
-    console.log('approvedAmount in contract ', approvedAmount)
-
-    if (approvedAmount > stakeAMount) {
-      sendToken(stakeAMount, tokenId);
+          setLoading(false);
+        })
+        .on("confirmation", (confirmationNumber, receipt) => {
+          console.log("confirmationNumber sendToken", confirmationNumber);
+          console.log("receipt sendToken", receipt);
+        })
+        .on("error", (error) => {
+          console.log("error sendToken", error);
+          setLoading(false);
+        });
     } else {
-      approveAndSendToken(stakeAMount, tokenId, token);
+      const tokenId = token === "USDC" ? 0 : 1;
+
+      const contract = token === "USDC" ? usdcContract : daiContract;
+
+      const stakeAMount =
+        token === "USDC"
+          ? web3.utils.toWei(value, "mwei")
+          : web3.utils.toWei(value, "ether");
+
+      console.log("stakeAMount ", stakeAMount);
+
+      const approvedAmount = await contract.methods
+        .allowance(address, bridgeAddress)
+        .call();
+
+      console.log("approvedAmount in contract ", approvedAmount);
+
+      if (approvedAmount > stakeAMount) {
+        sendToken(stakeAMount, tokenId);
+      } else {
+        approveAndSendToken(stakeAMount, tokenId, token);
+      }
     }
   };
 
@@ -211,6 +242,7 @@ const App = () => {
               <Field as="select" name="token">
                 <option value="USDC">USDC</option>
                 <option value="DAI">DAI</option>
+                <option value="DAPP">DAPP</option>
               </Field>
             </div>
             <div>
