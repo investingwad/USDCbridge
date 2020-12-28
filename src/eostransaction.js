@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import WalletProvider from "./walletProvider";
 import { Field, Form, Formik, ErrorMessage } from "formik";
-import { useSelector } from 'react-redux'
+import { useSelector } from "react-redux";
 import * as Yup from "yup";
 //@ts-ignore
 import EosApi from "eosjs-api";
@@ -23,17 +23,16 @@ const initialValues = {
   token: "6,EUSDC",
 };
 
-
 const EosTransaction = (props) => {
-  const username = useSelector((state) => state.user.username)
-  const walletConnected = useSelector((state) => state.user.walletConnected)
+  const username = useSelector((state) => state.user.username);
+  const walletConnected = useSelector((state) => state.user.walletConnected);
   const [balances, setUserBalances] = useState([]);
   const [tokenSymbol, setSymbols] = useState(["6,EUSDC"]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, seterrorMsg] = useState("");
   const [successMsg, setsuccessMsg] = useState("");
 
-  const {loggedIn} = props;
+  const { loggedIn } = props;
   const getTokens = async () => {
     let tokens = [];
     const requests = await eos.getTableRows({
@@ -51,7 +50,7 @@ const EosTransaction = (props) => {
     setSymbols(tokens);
     return tokens;
   };
- 
+
   const getBalance = async (tokens, account) => {
     const userbal = [];
     try {
@@ -93,21 +92,21 @@ const EosTransaction = (props) => {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     getTokens();
-    const getbal = async()=>{
+    const getbal = async () => {
       const tokens = await getTokens();
-      if(walletConnected && tokens.length){
+      if (walletConnected && tokens.length) {
         await getBalance(tokens, username);
       }
+    };
+    if (loggedIn) {
+      getbal();
     }
-    if(loggedIn){
-     getbal()
+    if (!loggedIn) {
+      setUserBalances([]);
     }
-    if(!loggedIn){
-      setUserBalances([])
-    }
-  }, [loggedIn])
+  }, [loggedIn]);
 
   const handleTransfer = async (values) => {
     try {
@@ -115,11 +114,20 @@ const EosTransaction = (props) => {
       const { value, token } = values;
       const wallet = WalletProvider.getWallet();
       if (!!wallet) {
+        let account;
+        let toAcc ;
+        if(token == '4,DAPP'){
+          account= 'dappservices'
+          toAcc = 'ethdappdepo1'
+        }else{
+          account="ddadlptoken1"
+          toAcc = 'etheosmultok'
+        }
         const result = await wallet.eosApi.transact(
           {
             actions: [
               {
-                account: "ddadlptoken1",
+                account: account,
                 name: "transfer",
                 authorization: [
                   {
@@ -129,7 +137,7 @@ const EosTransaction = (props) => {
                 ],
                 data: {
                   from: wallet.auth.accountName,
-                  to: "etheosmultok",
+                  to: toAcc,
                   quantity: `${parseInt(value).toFixed(
                     parseInt(token.split(",")[0])
                   )} ${token.split(",")[1]} `,
@@ -183,12 +191,14 @@ const EosTransaction = (props) => {
               </div>
               <div>
                 <Field as="select" name="token">
-                  {tokenSymbol.map((sym) => (
+                  {/* {tokenSymbol.map((sym) => (
                     <option name="token" value={sym}>
                       {sym.split(",")[1]}
                     </option>
-                  ))}
-                  {/* <option value="USDC">USDC</option> */}
+                  ))} */}
+                  <option value="6,EUSDC">EUSDC</option>
+                  <option value="6,DAI">DAI</option>
+                  <option value="4,DAPP">DAPP</option>
                 </Field>
               </div>
               <div>
