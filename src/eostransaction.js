@@ -171,7 +171,7 @@ const EosTransaction = (props) => {
 
   return (
     <div className="form-container">
-      <div>3. Send Tokens EOS to Ethereum</div>
+      <div>4. Send Tokens EOS to Ethereum</div>
       <div className="login">
         <div className="register">
           <Formik
