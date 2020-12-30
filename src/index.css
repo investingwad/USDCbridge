@@ -165,6 +165,11 @@ label input {
     width: 100%;
 }
 
+.text {
+    padding: 10px;
+    text-align: center;
+}
+
 
 /* .userbalance {
     display: inline-flex;

@@ -26,6 +26,9 @@ const initialValues = {
 const EosTransaction = (props) => {
   const username = useSelector((state) => state.user.username);
   const walletConnected = useSelector((state) => state.user.walletConnected);
+  const ethwalletConnected = useSelector(
+    (state) => state.address.ethWalletConnected
+  );
   const [balances, setUserBalances] = useState([]);
   const [tokenSymbol, setSymbols] = useState(["6,EUSDC"]);
   const [loading, setLoading] = useState(false);
@@ -113,6 +116,12 @@ const EosTransaction = (props) => {
       setLoading(true);
       const { value, token } = values;
       const wallet = WalletProvider.getWallet();
+      if (!walletConnected) {
+        seterrorMsg("Eos wallet is not connected");
+      }
+      if (!ethwalletConnected) {
+        seterrorMsg("Ethereum wallet is not connected");
+      }
       if (!!wallet) {
         let account;
         let toAcc ;

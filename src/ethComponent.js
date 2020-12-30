@@ -11,6 +11,7 @@ import {
   dappBrigeAddress,
 } from "./abi";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -36,14 +37,16 @@ const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
 const dappContract = new web3.eth.Contract(dappBrigeAbi, dappBrigeAddress);
 
 const Ethereum = () => {
-  const [address, setAddress] = useState("");
+  const walletConnected = useSelector((state) => state.user.walletConnected);
+  const address = useSelector((state) => state.address.address);
+  const ethwalletConnected = useSelector(
+    (state) => state.address.ethWalletConnected
+  );
   const [loading, setLoading] = useState("");
   const [checked, setChecked] = useState(false);
 
   const sendToken = async (stakeAMount, tokenId) => {
     console.log("inside send token");
-
-    setLoading(true);
 
     brigeContract.methods
       .sendToken(stakeAMount, tokenId)
@@ -132,27 +135,6 @@ const Ethereum = () => {
       });
   };
 
-  const connectToMetamask = async () => {
-    try {
-      const { ethereum } = window;
-      const { chainId } = ethereum;
-
-      if (chainId === "0x3") {
-        if (!!ethereum) {
-          const accounts = await ethereum.request({
-            method: "eth_requestAccounts",
-          });
-
-          setAddress(accounts[0]);
-        }
-      } else {
-        alert("Please select Ropsten test network then connect");
-      }
-    } catch (e) {
-      console.log("something went wrong ", e);
-    }
-  };
-
   const handleSubmit = async (values) => {
     console.log("values ", values);
 
@@ -222,9 +204,9 @@ const Ethereum = () => {
     <div className="form-container">
       <div>3. Send Tokens Ethereum to EOS</div>
       <div className="login">
-        <button onClick={connectToMetamask}>
+        {/* <button onClick={connectToMetamask}>
           {!!address ? "Connected" : "Connect to metamask"}
-        </button>
+        </button> */}
 
         <div className="tokenform">
           <Formik

@@ -18,6 +18,13 @@ const userReducer = (state = initialState, action) => {
                 walletConnected: false,
                 username: ''
             }
+
+            // case "ETHLOGIN":
+            //     return {
+            //         ...state,
+            //         ethWalletConnected: true,
+            //         username: action.username
+            //     }
         default:
             return state
     }

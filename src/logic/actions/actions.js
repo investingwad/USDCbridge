@@ -5,6 +5,13 @@ export const login = ({ username }) => {
     }
 }
 
+export const Ethlogin = ({ address }) => {
+    return {
+        type: 'ETHLOGIN',
+        address
+    }
+}
+
 export const logout = () => {
     return {
         type: 'LOGOUT'
