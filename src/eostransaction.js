@@ -60,14 +60,22 @@ const EosTransaction = (props) => {
       if (tokens.length) {
         console.log("username----", account);
         for (const symbol of tokens) {
+          let code;
+          let toAcc;
+          if (symbol == "4,DAPP") {
+            code = "dappservices";
+          } else {
+            code = "ddadlptoken1";
+          }
           const tokensData = {
-            code: "etheosmultok",
+            code: code,
             json: true,
             limit: 1000,
-            scope: symbol.split(",")[1],
-            table: "available",
+            scope: account,
+            table: "accounts",
             table_key: account,
           };
+          console.log("tokensData----", tokensData);
           const responses = await fetch(
             "https://api.kylin.alohaeos.com/v1/chain/get_table_rows",
             {
@@ -79,11 +87,10 @@ const EosTransaction = (props) => {
           const tokensdata = await responses.json();
           console.log("respose----", tokensdata);
           if (tokensdata.rows.length) {
-            tokensdata.rows.map((row) => {
-              if (row.account == account) {
-                userbal.push(tokensdata.rows[0].balance);
-              }
-            });
+            const balanceRow = tokensdata.rows.find(
+              (row) => row.balance.split(" ")[1] == symbol.split(",")[1]
+            );
+            userbal.push(balanceRow.balance);
           }
         }
         console.log("userbalance ---", userbal);
@@ -124,13 +131,13 @@ const EosTransaction = (props) => {
       }
       if (!!wallet) {
         let account;
-        let toAcc ;
-        if(token == '4,DAPP'){
-          account= 'dappservices'
-          toAcc = 'ethdappdepo1'
-        }else{
-          account="ddadlptoken1"
-          toAcc = 'etheosmultok'
+        let toAcc;
+        if (token == "4,DAPP") {
+          account = "dappservices";
+          toAcc = "ethdappdepo1";
+        } else {
+          account = "ddadlptoken1";
+          toAcc = "etheosmultok";
         }
         const result = await wallet.eosApi.transact(
           {
