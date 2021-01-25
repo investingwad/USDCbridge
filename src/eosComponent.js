@@ -7,6 +7,9 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "./logic/actions/actions";
 import { Ethlogin } from "./logic/actions/actions";
+//@ts-ignore
+import EosApi from "eosjs-api";
+import { contracts, eosEndpoint, tables } from "./config";
 const ethereum_address = require("ethereum-address");
 
 const updateSchema = Yup.object().shape({
@@ -20,6 +23,11 @@ const updateSchema = Yup.object().shape({
 const initialUpdate = {
   newaddress: "",
 };
+
+const options = {
+  httpEndpoint: eosEndpoint,
+};
+const eos = EosApi(options);
 
 const Eos = (props) => {
   const username = useSelector((state) => state.user.username);
@@ -36,6 +44,7 @@ const Eos = (props) => {
   const [successMsg, setsuccessMsg] = useState("");
   const [regsuccessMsg, setregsuccessMsg] = useState("");
   const [ethaddress, setAddress] = useState("");
+  const [registerfee, setRegisterFee] = useState("0.0000 EOS");
 
   const registerSchema = Yup.object().shape({
     address: Yup.string()
@@ -49,6 +58,22 @@ const Eos = (props) => {
   const initialRegister = {
     address: ethaddress,
   };
+
+  useEffect(() => {
+    const getfees = async () => {
+      const requests = await eos.getTableRows({
+        code: contracts.BRIDGE_CON,
+        scope: contracts.BRIDGE_CON,
+        table: tables.Configs,
+        json: "true",
+      });
+      if (requests.rows.length) {
+        const fee = await requests.row[0].registrationfee;
+        setRegisterFee(fee);
+      }
+    };
+    getfees();
+  }, []);
 
   const closeModal = () => {
     setShow(false);
@@ -100,13 +125,13 @@ const Eos = (props) => {
                 ],
                 data: {
                   from: wallet.auth.accountName,
-                  to: "etheosmultok",
-                  quantity: `${eosAmount.toFixed(4)} EOS`,
+                  to: contracts.BRIDGE_CON,
+                  quantity: registerfee,
                   memo: "registration fees",
                 },
               },
               {
-                account: "etheosmultok",
+                account: contracts.BRIDGE_CON,
                 name: "registereth",
                 authorization: [
                   {
@@ -172,13 +197,13 @@ const Eos = (props) => {
                 ],
                 data: {
                   from: wallet.auth.accountName,
-                  to: "etheosmultok",
-                  quantity: `${eosAmount.toFixed(4)} EOS`,
+                  to: contracts.BRIDGE_CON,
+                  quantity: registerfee,
                   memo: "modification fees",
                 },
               },
               {
-                account: "etheosmultok",
+                account: contracts.BRIDGE_CON,
                 name: "modethadress",
                 authorization: [
                   {
@@ -229,7 +254,7 @@ const Eos = (props) => {
           dispatch(Ethlogin({ address: accounts[0] }));
         }
       } else {
-        alert("Please select Ropsten test network then connect");
+        alert("Please select  test network then connect");
       }
     } catch (e) {
       console.log("something went wrong ", e);
@@ -269,7 +294,8 @@ const Eos = (props) => {
                   </div>
                   <div>
                     <div className="note">
-                      Note:- 1 EOS will be charged for registration fees.
+                      Note:- Current registration fee {registerfee} will be
+                      deducted from your account.
                     </div>
                     <button
                       type="submit"
@@ -329,7 +355,8 @@ const Eos = (props) => {
                   </div>
                   <div>
                     <div className="note">
-                      Note:- 1 EOS will be charged for modification fees.
+                      Note:- Current modification fee {registerfee} will be
+                      deducted from your account.
                     </div>
                     <button
                       type="submit"

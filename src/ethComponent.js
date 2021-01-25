@@ -7,8 +7,8 @@ import {
   bridgeAddress,
   daiAddress,
   tokenAbi,
-  dappBrigeAbi,
-  dappBrigeAddress,
+  // dappBrigeAbi,
+  // dappBrigeAddress,
 } from "./abi";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -34,7 +34,7 @@ const initialValues = {
 const usdcContract = new web3.eth.Contract(tokenAbi, usdcAddress);
 const daiContract = new web3.eth.Contract(tokenAbi, daiAddress);
 const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
-const dappContract = new web3.eth.Contract(dappBrigeAbi, dappBrigeAddress);
+// const dappContract = new web3.eth.Contract(dappBrigeAbi, dappBrigeAddress);
 
 const Ethereum = () => {
   const walletConnected = useSelector((state) => state.user.walletConnected);
@@ -147,32 +147,32 @@ const Ethereum = () => {
 
     console.log("value ", value);
 
-    if (token === "DAPP") {
-      const dappAmount = (parseFloat(value) * 1e4).toString();
-      setLoading(true);
+    // if (token === "DAPP") {
+    //   const dappAmount = (parseFloat(value) * 1e4).toString();
+    //   setLoading(true);
 
-      dappContract.methods
-        .sendToken(dappAmount)
-        .send({
-          from: address,
-        })
-        .on("transactionHash", (hash) => {
-          console.log("transactionHash  sendToken", hash);
-        })
-        .on("receipt", (receipt) => {
-          console.log("receipt sendToken", receipt);
+    //   dappContract.methods
+    //     .sendToken(dappAmount)
+    //     .send({
+    //       from: address,
+    //     })
+    //     .on("transactionHash", (hash) => {
+    //       console.log("transactionHash  sendToken", hash);
+    //     })
+    //     .on("receipt", (receipt) => {
+    //       console.log("receipt sendToken", receipt);
 
-          setLoading(false);
-        })
-        .on("confirmation", (confirmationNumber, receipt) => {
-          console.log("confirmationNumber sendToken", confirmationNumber);
-          console.log("receipt sendToken", receipt);
-        })
-        .on("error", (error) => {
-          console.log("error sendToken", error);
-          setLoading(false);
-        });
-    } else {
+    //       setLoading(false);
+    //     })
+    //     .on("confirmation", (confirmationNumber, receipt) => {
+    //       console.log("confirmationNumber sendToken", confirmationNumber);
+    //       console.log("receipt sendToken", receipt);
+    //     })
+    //     .on("error", (error) => {
+    //       console.log("error sendToken", error);
+    //       setLoading(false);
+    //     });
+    // } else {
       const tokenId = token === "USDC" ? 0 : 1;
 
       const contract = token === "USDC" ? usdcContract : daiContract;
@@ -195,7 +195,7 @@ const Ethereum = () => {
       } else {
         approveAndSendToken(stakeAMount, tokenId, token);
       }
-    }
+    // }
   };
 
   console.log("checked ", checked);
@@ -225,7 +225,7 @@ const Ethereum = () => {
                 <Field as="select" name="token">
                   <option value="USDC">USDC</option>
                   <option value="DAI">DAI</option>
-                  <option value="DAPP">DAPP</option>
+                  {/* <option value="DAPP">DAPP</option> */}
                 </Field>
               </div>
               <div>

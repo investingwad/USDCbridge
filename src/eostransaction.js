@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 import * as Yup from "yup";
 //@ts-ignore
 import EosApi from "eosjs-api";
+import { contracts, eosEndpoint, tables } from "./config";
 
 const options = {
-  httpEndpoint: "https://api.kylin.alohaeos.com",
+  httpEndpoint: eosEndpoint,
 };
 const eos = EosApi(options);
 
@@ -39,9 +40,9 @@ const EosTransaction = (props) => {
   const getTokens = async () => {
     let tokens = [];
     const requests = await eos.getTableRows({
-      code: "etheosmultok",
-      scope: "etheosmultok",
-      table: "acceptedsym1",
+      code: contracts.BRIDGE_CON,
+      scope: contracts.BRIDGE_CON,
+      table: tables.Symbols,
       json: "true",
     });
     if (requests.rows.length) {
@@ -62,22 +63,22 @@ const EosTransaction = (props) => {
         for (const symbol of tokens) {
           let code;
           let toAcc;
-          if (symbol == "4,DAPP") {
-            code = "dappservices";
-          } else {
-            code = "ddadlptoken1";
-          }
+          // if (symbol == "4,DAPP") {
+          //   code = "dappservices";
+          // } else {
+          code = contracts.TokenContract;
+          // }
           const tokensData = {
             code: code,
             json: true,
             limit: 1000,
             scope: account,
-            table: "accounts",
+            table: tables.Accounts,
             table_key: account,
           };
           console.log("tokensData----", tokensData);
           const responses = await fetch(
-            "https://api.kylin.alohaeos.com/v1/chain/get_table_rows",
+            "https://api.main.alohaeos.com/v1/chain/get_table_rows",
             {
               method: "post",
               body: JSON.stringify(tokensData),
@@ -132,13 +133,13 @@ const EosTransaction = (props) => {
       if (!!wallet) {
         let account;
         let toAcc;
-        if (token == "4,DAPP") {
-          account = "dappservices";
-          toAcc = "ethdappdepo1";
-        } else {
-          account = "ddadlptoken1";
-          toAcc = "etheosmultok";
-        }
+        // if (token == "4,DAPP") {
+        //   account = "dappservices";
+        //   toAcc = contracts.EthContract;
+        // } else {
+        account = contracts.TokenContract;
+        toAcc = contracts.BRIDGE_CON;
+        // }
         const result = await wallet.eosApi.transact(
           {
             actions: [
@@ -214,7 +215,7 @@ const EosTransaction = (props) => {
                   ))} */}
                   <option value="6,EUSDC">EUSDC</option>
                   <option value="6,DAI">DAI</option>
-                  <option value="4,DAPP">DAPP</option>
+                  {/* <option value="4,DAPP">DAPP</option> */}
                 </Field>
               </div>
               <div>
