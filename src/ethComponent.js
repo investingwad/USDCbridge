@@ -147,54 +147,28 @@ const Ethereum = () => {
 
     console.log("value ", value);
 
-    // if (token === "DAPP") {
-    //   const dappAmount = (parseFloat(value) * 1e4).toString();
-    //   setLoading(true);
+    const tokenId = token === "USDC" ? 0 : 1;
 
-    //   dappContract.methods
-    //     .sendToken(dappAmount)
-    //     .send({
-    //       from: address,
-    //     })
-    //     .on("transactionHash", (hash) => {
-    //       console.log("transactionHash  sendToken", hash);
-    //     })
-    //     .on("receipt", (receipt) => {
-    //       console.log("receipt sendToken", receipt);
+    const contract = token === "USDC" ? usdcContract : daiContract;
 
-    //       setLoading(false);
-    //     })
-    //     .on("confirmation", (confirmationNumber, receipt) => {
-    //       console.log("confirmationNumber sendToken", confirmationNumber);
-    //       console.log("receipt sendToken", receipt);
-    //     })
-    //     .on("error", (error) => {
-    //       console.log("error sendToken", error);
-    //       setLoading(false);
-    //     });
-    // } else {
-      const tokenId = token === "USDC" ? 0 : 1;
+    const stakeAMount =
+      token === "USDC"
+        ? web3.utils.toWei(value, "mwei")
+        : web3.utils.toWei(value, "ether");
 
-      const contract = token === "USDC" ? usdcContract : daiContract;
+    console.log("stakeAMount ", stakeAMount);
 
-      const stakeAMount =
-        token === "USDC"
-          ? web3.utils.toWei(value, "mwei")
-          : web3.utils.toWei(value, "ether");
+    const approvedAmount = await contract.methods
+      .allowance(address, bridgeAddress)
+      .call();
 
-      console.log("stakeAMount ", stakeAMount);
+    console.log("approvedAmount in contract ", approvedAmount);
 
-      const approvedAmount = await contract.methods
-        .allowance(address, bridgeAddress)
-        .call();
-
-      console.log("approvedAmount in contract ", approvedAmount);
-
-      if (approvedAmount > stakeAMount) {
-        sendToken(stakeAMount, tokenId);
-      } else {
-        approveAndSendToken(stakeAMount, tokenId, token);
-      }
+    if (approvedAmount > stakeAMount) {
+      sendToken(stakeAMount, tokenId);
+    } else {
+      approveAndSendToken(stakeAMount, tokenId, token);
+    }
     // }
   };
 

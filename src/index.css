@@ -131,13 +131,20 @@ label input {
     padding: 3px;
 } */
 
-.registerbtn {
+
+/* .registerbtn {
     margin-top: 36px;
-}
+} */
 
 .note {
     font-size: 13px;
     margin-top: 10px;
+    padding: 5px;
+}
+
+.notefee {
+    font-size: 13px;
+    margin-top: 20px;
     padding: 5px;
 }
 

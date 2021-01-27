@@ -14,9 +14,9 @@ class WalletProvider {
             appName: 'bridge_app',
             network: {
                 protocol: 'https',
-                host: 'api.kylin.alohaeos.com',
+                host: 'api.main.alohaeos.com',
                 port: 443,
-                chainId: '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'
+                chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906'
             },
             walletProviders: [
                 scatter(),
@@ -38,7 +38,7 @@ class WalletProvider {
         await wallet.login()
     }
 
-    getWallet(){
+    getWallet() {
         return this.wallet
     }
 

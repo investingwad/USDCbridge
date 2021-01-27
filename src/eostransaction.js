@@ -35,6 +35,8 @@ const EosTransaction = (props) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, seterrorMsg] = useState("");
   const [successMsg, setsuccessMsg] = useState("");
+  const [usdcfee, setUsdcFee] = useState("0.0000 USDC");
+  const [daifee, setDaiFee] = useState("0.0000 DAI");
 
   const { loggedIn } = props;
   const getTokens = async () => {
@@ -50,7 +52,6 @@ const EosTransaction = (props) => {
         tokens.push(row.dtoken.toString());
       });
     }
-    console.log("tokesn----", tokens);
     setSymbols(tokens);
     return tokens;
   };
@@ -59,7 +60,6 @@ const EosTransaction = (props) => {
     const userbal = [];
     try {
       if (tokens.length) {
-        console.log("username----", account);
         for (const symbol of tokens) {
           let code;
           let toAcc;
@@ -76,7 +76,6 @@ const EosTransaction = (props) => {
             table: tables.Accounts,
             table_key: account,
           };
-          console.log("tokensData----", tokensData);
           const responses = await fetch(
             "https://api.main.alohaeos.com/v1/chain/get_table_rows",
             {
@@ -86,7 +85,7 @@ const EosTransaction = (props) => {
           );
 
           const tokensdata = await responses.json();
-          console.log("respose----", tokensdata);
+
           if (tokensdata.rows.length) {
             const balanceRow = tokensdata.rows.find(
               (row) => row.balance.split(" ")[1] == symbol.split(",")[1]
@@ -94,7 +93,6 @@ const EosTransaction = (props) => {
             userbal.push(balanceRow.balance);
           }
         }
-        console.log("userbalance ---", userbal);
         setUserBalances(userbal);
       }
     } catch (e) {
@@ -102,6 +100,32 @@ const EosTransaction = (props) => {
       setUserBalances(userbal);
     }
   };
+
+  useEffect(() => {
+    const getfees = async () => {
+      const usdcreq = await eos.getTableRows({
+        code: contracts.BRIDGE_CON,
+        scope: "USDC",
+        table: tables.FEE_TAB,
+        json: "true",
+      });
+      const daireq = await eos.getTableRows({
+        code: contracts.BRIDGE_CON,
+        scope: "DAI",
+        table: tables.FEE_TAB,
+        json: "true",
+      });
+      if (usdcreq.rows.length) {
+        const fee = await usdcreq.rows[0].minfeewithdraw;
+        setUsdcFee(fee);
+      }
+      if (daireq.rows.length) {
+        const fee = await daireq.rows[0].minfeewithdraw;
+        setDaiFee(fee);
+      }
+    };
+    getfees();
+  }, []);
 
   useEffect(() => {
     getTokens();
@@ -121,16 +145,14 @@ const EosTransaction = (props) => {
 
   const handleTransfer = async (values) => {
     try {
-      setLoading(true);
       const { value, token } = values;
       const wallet = WalletProvider.getWallet();
       if (!walletConnected) {
         seterrorMsg("Eos wallet is not connected");
-      }
-      if (!ethwalletConnected) {
+      } else if (!ethwalletConnected) {
         seterrorMsg("Ethereum wallet is not connected");
-      }
-      if (!!wallet) {
+      } else if (!!wallet) {
+        setLoading(true);
         let account;
         let toAcc;
         // if (token == "4,DAPP") {
@@ -178,7 +200,6 @@ const EosTransaction = (props) => {
         setLoading(false);
       }
     } catch (e) {
-      console.log("error in treansferinng----", JSON.parse(JSON.stringify(e)));
       seterrorMsg(e.message);
       setLoading(false);
     } finally {
@@ -213,13 +234,16 @@ const EosTransaction = (props) => {
                       {sym.split(",")[1]}
                     </option>
                   ))} */}
-                  <option value="6,EUSDC">EUSDC</option>
+                  <option value="6,USDC">USDC</option>
                   <option value="6,DAI">DAI</option>
                   {/* <option value="4,DAPP">DAPP</option> */}
                 </Field>
               </div>
               <div>
                 <ErrorMessage name="token" className="error" />
+              </div>
+              <div className="notefee">
+                Note: Current withdraw fee is {usdcfee} and {daifee} set
               </div>
               <div>
                 <button

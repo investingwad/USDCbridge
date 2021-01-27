@@ -50,7 +50,6 @@ const Eos = (props) => {
     address: Yup.string()
       .required("Enter ethereum address")
       .test("ethereumaddress", `Invalid ethereum address`, (address) => {
-        console.log("addddddddddd----", address);
         return ethereum_address.isAddress(address);
       }),
   });
@@ -68,7 +67,7 @@ const Eos = (props) => {
         json: "true",
       });
       if (requests.rows.length) {
-        const fee = await requests.row[0].registrationfee;
+        const fee = await requests.rows[0].registrationfee;
         setRegisterFee(fee);
       }
     };
@@ -103,7 +102,6 @@ const Eos = (props) => {
       const eosAmount = 1;
       const wallet = WalletProvider.getWallet();
       const { address } = values;
-      console.log("address----", values);
       if (!walletConnected) {
         setregerrorMsg("Eos wallet is not connected");
       }
@@ -175,7 +173,6 @@ const Eos = (props) => {
       const eosAmount = 1;
       const wallet = WalletProvider.getWallet();
       const { newaddress } = values;
-      console.log("address----", newaddress);
       if (!walletConnected) {
         seterrorMsg("Eos wallet is not connected");
       }
@@ -245,7 +242,7 @@ const Eos = (props) => {
       const { ethereum } = window;
       const { chainId } = ethereum;
 
-      if (chainId === "0x3") {
+      if (chainId === "0x1") {
         if (!!ethereum) {
           const accounts = await ethereum.request({
             method: "eth_requestAccounts",
@@ -254,7 +251,7 @@ const Eos = (props) => {
           dispatch(Ethlogin({ address: accounts[0] }));
         }
       } else {
-        alert("Please select  test network then connect");
+        alert("Please select Ethereum Main Network (Mainnet) then connect");
       }
     } catch (e) {
       console.log("something went wrong ", e);

@@ -1,12 +1,12 @@
 export const tables = {
     Accounts: 'accounts',
     Symbols: 'acceptedsym',
-    Configs: 'configset'
+    Configs: 'configset',
+    FEE_TAB: 'feesettings'
 }
 export const contracts = {
     BRIDGE_CON: 'dadusdbridge',
     TokenContract: 'dadusdtokens'
-        // EthContract: 'ethdappdepo1'
 }
 
 export const eosEndpoint = "https://api.main.alohaeos.com";
