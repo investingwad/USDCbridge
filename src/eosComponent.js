@@ -9,7 +9,13 @@ import { logout } from "./logic/actions/actions";
 import { Ethlogin } from "./logic/actions/actions";
 //@ts-ignore
 import EosApi from "eosjs-api";
-import { contracts, eosEndpoint, tables } from "./config";
+import {
+  contracts,
+  dspEndpoint,
+  eosEndpoint,
+  tables,
+  walletEndpoint,
+} from "./config";
 const ethereum_address = require("ethereum-address");
 
 const updateSchema = Yup.object().shape({
@@ -39,9 +45,14 @@ const Eos = (props) => {
   const [show, setShow] = useState(false);
   const [regstloading, setRegisterLoading] = useState(false);
   const [updateloading, setUpdateLoading] = useState(false);
+  const [gasloading, setGasLoading] = useState(false);
+  const [ethloading, setEthLoading] = useState(false);
+  const [eosloading, setEosLoading] = useState(false);
   const [regerrorMsg, setregerrorMsg] = useState("");
   const [errorMsg, seterrorMsg] = useState("");
   const [successMsg, setsuccessMsg] = useState("");
+  const [errorMesg, seterrorMesg] = useState("");
+  const [successMesg, setsuccessMesg] = useState("");
   const [regsuccessMsg, setregsuccessMsg] = useState("");
   const [ethaddress, setAddress] = useState("");
   const [registerfee, setRegisterFee] = useState("0.0000 EOS");
@@ -98,17 +109,15 @@ const Eos = (props) => {
 
   const handleRegister = async (values) => {
     try {
-      setRegisterLoading(true);
       const eosAmount = 1;
       const wallet = WalletProvider.getWallet();
       const { address } = values;
       if (!walletConnected) {
         setregerrorMsg("Eos wallet is not connected");
-      }
-      if (!ethwalletConnected) {
+      } else if (!ethwalletConnected) {
         setregerrorMsg("Ethereum wallet is not connected");
-      }
-      if (!!wallet) {
+      } else if (!!wallet) {
+        setRegisterLoading(true);
         const result = await wallet.eosApi.transact(
           {
             actions: [
@@ -169,17 +178,15 @@ const Eos = (props) => {
 
   const handleUpdate = async (values) => {
     try {
-      setUpdateLoading(true);
       const eosAmount = 1;
       const wallet = WalletProvider.getWallet();
       const { newaddress } = values;
       if (!walletConnected) {
         seterrorMsg("Eos wallet is not connected");
-      }
-      if (!ethwalletConnected) {
+      } else if (!ethwalletConnected) {
         seterrorMsg("Ethereum wallet is not connected");
-      }
-      if (!!wallet) {
+      } else if (!!wallet) {
+        setUpdateLoading(true);
         const result = await wallet.eosApi.transact(
           {
             actions: [
@@ -234,6 +241,146 @@ const Eos = (props) => {
       setUpdateLoading(false);
     } finally {
       setUpdateLoading(false);
+    }
+  };
+
+  const updateGasPrice = async () => {
+    try {
+      // WalletProvider.resetEndpoint(dspEndpoint.endpoint, dspEndpoint.protocol);
+      const wallet = WalletProvider.getWallet();
+      console.log("wallet----hereee---", wallet);
+      if (!walletConnected) {
+        seterrorMesg("Eos wallet is not connected");
+      } else if (!ethwalletConnected) {
+        seterrorMesg("Ethereum wallet is not connected");
+      } else if (!!wallet) {
+        setGasLoading(true);
+        const result = await wallet.eosApi.transact(
+          {
+            actions: [
+              {
+                account: "dadusdbridge",
+                name: "setgasprice",
+                authorization: [
+                  {
+                    actor: wallet.auth.accountName,
+                    permission: wallet.auth.permission,
+                  },
+                ],
+                data: {},
+              },
+            ],
+          },
+          {
+            broadcast: true,
+            blocksBehind: 3,
+            expireSeconds: 60,
+          }
+        );
+        if (result) {
+          setGasLoading(false);
+          setsuccessMesg("Transaction Success");
+          seterrorMesg("");
+        }
+        console.log("result----", result);
+      }
+    } catch (e) {
+      console.log("error---", e);
+      setGasLoading(false);
+    } finally {
+      setGasLoading(false);
+    }
+  };
+
+  const updateEthPrice = async () => {
+    try {
+      const wallet = WalletProvider.getWallet();
+      console.log("wallet----hereee---", wallet);
+      if (!walletConnected) {
+        seterrorMesg("Eos wallet is not connected");
+      } else if (!ethwalletConnected) {
+        seterrorMesg("Ethereum wallet is not connected");
+      } else if (!!wallet) {
+        setEthLoading(true);
+        const result = await wallet.eosApi.transact(
+          {
+            actions: [
+              {
+                account: "dadusdbridge",
+                name: "setethprice",
+                authorization: [
+                  {
+                    actor: wallet.auth.accountName,
+                    permission: wallet.auth.permission,
+                  },
+                ],
+                data: {},
+              },
+            ],
+          },
+          {
+            broadcast: true,
+            blocksBehind: 3,
+            expireSeconds: 60,
+          }
+        );
+        console.log("result----", result);
+        if (result) {
+          setEthLoading(false);
+          setsuccessMesg("Transaction Success");
+          seterrorMesg("");
+        }
+      }
+    } catch (e) {
+      setEthLoading(false);
+    } finally {
+      setEthLoading(false);
+    }
+  };
+
+  const updateEosPrice = async () => {
+    try {
+      const wallet = WalletProvider.getWallet();
+      console.log("wallet----hereee---", wallet);
+      if (!walletConnected) {
+        seterrorMesg("Eos wallet is not connected");
+      } else if (!ethwalletConnected) {
+        seterrorMesg("Ethereum wallet is not connected");
+      } else if (!!wallet) {
+        setEosLoading(true);
+        const result = await wallet.eosApi.transact(
+          {
+            actions: [
+              {
+                account: "dadusdbridge",
+                name: "seteosprice",
+                authorization: [
+                  {
+                    actor: wallet.auth.accountName,
+                    permission: wallet.auth.permission,
+                  },
+                ],
+                data: {},
+              },
+            ],
+          },
+          {
+            broadcast: true,
+            blocksBehind: 3,
+            expireSeconds: 60,
+          }
+        );
+        console.log("result----", result);
+        if (result) {
+          setEosLoading(false);
+          setsuccessMesg("Transaction Success");
+          seterrorMsg("");
+        }
+      }
+    } catch (e) {
+      setEosLoading(false);
+    } finally {
+      setEosLoading(false);
     }
   };
 
@@ -330,7 +477,43 @@ const Eos = (props) => {
       </div>
 
       <div className="form-container">
-        <div>2. Modify Ethereum Address on EOS</div>
+        <div>2. Update Prices (Ethereum Gas, EOS, ETH) </div>
+        <div className="login">
+          <div className="register">
+            <button
+              className="pricebtn"
+              disabled={gasloading}
+              onClick={updateGasPrice}
+            >
+              {gasloading ? "updating" : "Update GAS Price"}
+            </button>
+
+            <button
+              className="pricebtn"
+              disabled={ethloading}
+              onClick={updateEthPrice}
+            >
+              {ethloading ? "updating" : "Update ETH Price"}
+            </button>
+
+            <button
+              className="pricebtn"
+              disabled={eosloading}
+              onClick={updateEosPrice}
+            >
+              {eosloading ? "updating" : "Update EOS Price"}
+            </button>
+          </div>
+        </div>
+        {errorMesg ? (
+          <div className="error">{errorMesg}</div>
+        ) : (
+          <div className="success">{successMesg}</div>
+        )}
+      </div>
+
+      <div className="form-container">
+        <div>3. Modify Ethereum Address on EOS</div>
         <div className="login">
           <div className="register">
             <Formik

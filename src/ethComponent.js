@@ -176,7 +176,7 @@ const Ethereum = () => {
 
   return (
     <div className="form-container">
-      <div>3. Send Tokens Ethereum to EOS</div>
+      <div>4. Send Tokens Ethereum to EOS</div>
       <div className="login">
         {/* <button onClick={connectToMetamask}>
           {!!address ? "Connected" : "Connect to metamask"}
