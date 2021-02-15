@@ -26,7 +26,6 @@ const ConnectModal = (props) => {
 
     } catch (e) {
       console.log("something went wrong ", e);
-      // dispatch(showNotification({ notificationText: 'Failed to connect', notificationType: 2 }))
     } finally {
       setLoading(false);
       setActive(-1);

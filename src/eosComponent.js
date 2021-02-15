@@ -10,7 +10,9 @@ import { Ethlogin } from "./logic/actions/actions";
 //@ts-ignore
 import EosApi from "eosjs-api";
 import {
+  Actions,
   contracts,
+  Docs,
   dspEndpoint,
   eosEndpoint,
   tables,
@@ -122,8 +124,8 @@ const Eos = (props) => {
           {
             actions: [
               {
-                account: "eosio.token",
-                name: "transfer",
+                account: contracts.EosTokenContract,
+                name: Actions.Transfer,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -139,7 +141,7 @@ const Eos = (props) => {
               },
               {
                 account: contracts.BRIDGE_CON,
-                name: "registereth",
+                name: Actions.RegisterEth,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -168,7 +170,6 @@ const Eos = (props) => {
         setRegisterLoading(false);
       }
     } catch (e) {
-      console.log("err----", e);
       setregerrorMsg(e.message);
       setRegisterLoading(false);
     } finally {
@@ -178,7 +179,6 @@ const Eos = (props) => {
 
   const handleUpdate = async (values) => {
     try {
-      const eosAmount = 1;
       const wallet = WalletProvider.getWallet();
       const { newaddress } = values;
       if (!walletConnected) {
@@ -191,8 +191,8 @@ const Eos = (props) => {
           {
             actions: [
               {
-                account: "eosio.token",
-                name: "transfer",
+                account: contracts.EosTokenContract,
+                name: Actions.Transfer,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -208,7 +208,7 @@ const Eos = (props) => {
               },
               {
                 account: contracts.BRIDGE_CON,
-                name: "modethadress",
+                name: Actions.ModifyEth,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -246,9 +246,7 @@ const Eos = (props) => {
 
   const updateGasPrice = async () => {
     try {
-      // WalletProvider.resetEndpoint(dspEndpoint.endpoint, dspEndpoint.protocol);
       const wallet = WalletProvider.getWallet();
-      console.log("wallet----hereee---", wallet);
       if (!walletConnected) {
         seterrorMesg("Eos wallet is not connected");
       } else if (!ethwalletConnected) {
@@ -259,8 +257,8 @@ const Eos = (props) => {
           {
             actions: [
               {
-                account: "dadusdbridge",
-                name: "setgasprice",
+                account: contracts.BRIDGE_CON,
+                name: Actions.SetGasPrice,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -282,10 +280,8 @@ const Eos = (props) => {
           setsuccessMesg("Transaction Success");
           seterrorMesg("");
         }
-        console.log("result----", result);
       }
     } catch (e) {
-      console.log("error---", e);
       setGasLoading(false);
     } finally {
       setGasLoading(false);
@@ -295,7 +291,6 @@ const Eos = (props) => {
   const updateEthPrice = async () => {
     try {
       const wallet = WalletProvider.getWallet();
-      console.log("wallet----hereee---", wallet);
       if (!walletConnected) {
         seterrorMesg("Eos wallet is not connected");
       } else if (!ethwalletConnected) {
@@ -306,8 +301,8 @@ const Eos = (props) => {
           {
             actions: [
               {
-                account: "dadusdbridge",
-                name: "setethprice",
+                account: contracts.BRIDGE_CON,
+                name: Actions.SetEthPrice,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -324,7 +319,6 @@ const Eos = (props) => {
             expireSeconds: 60,
           }
         );
-        console.log("result----", result);
         if (result) {
           setEthLoading(false);
           setsuccessMesg("Transaction Success");
@@ -341,7 +335,6 @@ const Eos = (props) => {
   const updateEosPrice = async () => {
     try {
       const wallet = WalletProvider.getWallet();
-      console.log("wallet----hereee---", wallet);
       if (!walletConnected) {
         seterrorMesg("Eos wallet is not connected");
       } else if (!ethwalletConnected) {
@@ -352,8 +345,8 @@ const Eos = (props) => {
           {
             actions: [
               {
-                account: "dadusdbridge",
-                name: "seteosprice",
+                account: contracts.BRIDGE_CON,
+                name: Actions.SetEosPrice,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -370,7 +363,6 @@ const Eos = (props) => {
             expireSeconds: 60,
           }
         );
-        console.log("result----", result);
         if (result) {
           setEosLoading(false);
           setsuccessMesg("Transaction Success");
@@ -455,7 +447,7 @@ const Eos = (props) => {
           </div>
         </div>
         <a
-          href="https://docs.google.com/document/d/1peh47G369IqMjHkA3FptsODB5kRNN0DBSc17GNvzX1Q/edit?usp=sharing"
+          href={Docs.Eosdoc}
           target="_blank"
           rel="noreferrer"
         >

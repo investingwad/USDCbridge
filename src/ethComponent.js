@@ -7,11 +7,10 @@ import {
   bridgeAddress,
   daiAddress,
   tokenAbi,
-  // dappBrigeAbi,
-  // dappBrigeAddress,
 } from "./abi";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Docs } from "./config";
 
 const web3 = new Web3(Web3.givenProvider);
 
@@ -34,7 +33,6 @@ const initialValues = {
 const usdcContract = new web3.eth.Contract(tokenAbi, usdcAddress);
 const daiContract = new web3.eth.Contract(tokenAbi, daiAddress);
 const brigeContract = new web3.eth.Contract(bridgeAbi, bridgeAddress);
-// const dappContract = new web3.eth.Contract(dappBrigeAbi, dappBrigeAddress);
 
 const Ethereum = () => {
   const walletConnected = useSelector((state) => state.user.walletConnected);
@@ -46,8 +44,6 @@ const Ethereum = () => {
   const [checked, setChecked] = useState(false);
 
   const sendToken = async (stakeAMount, tokenId) => {
-    console.log("inside send token");
-
     brigeContract.methods
       .sendToken(stakeAMount, tokenId)
       .send({
@@ -169,7 +165,6 @@ const Ethereum = () => {
     } else {
       approveAndSendToken(stakeAMount, tokenId, token);
     }
-    // }
   };
 
   console.log("checked ", checked);
@@ -178,10 +173,6 @@ const Ethereum = () => {
     <div className="form-container">
       <div>4. Send Tokens Ethereum to EOS</div>
       <div className="login">
-        {/* <button onClick={connectToMetamask}>
-          {!!address ? "Connected" : "Connect to metamask"}
-        </button> */}
-
         <div className="tokenform">
           <Formik
             initialValues={initialValues}
@@ -199,7 +190,6 @@ const Ethereum = () => {
                 <Field as="select" name="token">
                   <option value="USDC">USDC</option>
                   <option value="DAI">DAI</option>
-                  {/* <option value="DAPP">DAPP</option> */}
                 </Field>
               </div>
               <div>
@@ -225,7 +215,7 @@ const Ethereum = () => {
       </div>
 
       <a
-        href="https://docs.google.com/document/u/1/d/14K6_DT-pqmBsAd3tLoHD-SKhPO1WCFW7unMKTMzxKx4/edit?usp=sharing"
+        href={Docs.Ethdoc}
         target="_blank"
         rel="noreferrer"
       >

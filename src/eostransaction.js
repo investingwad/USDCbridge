@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import * as Yup from "yup";
 //@ts-ignore
 import EosApi from "eosjs-api";
-import { contracts, eosEndpoint, tables } from "./config";
+import { Actions, contracts, eosEndpoint, tables } from "./config";
 
 const options = {
   httpEndpoint: eosEndpoint,
@@ -62,12 +62,8 @@ const EosTransaction = (props) => {
       if (tokens.length) {
         for (const symbol of tokens) {
           let code;
-          let toAcc;
-          // if (symbol == "4,DAPP") {
-          //   code = "dappservices";
-          // } else {
+          // let toAcc;
           code = contracts.TokenContract;
-          // }
           const tokensData = {
             code: code,
             json: true,
@@ -77,7 +73,7 @@ const EosTransaction = (props) => {
             table_key: account,
           };
           const responses = await fetch(
-            "https://api.main.alohaeos.com/v1/chain/get_table_rows",
+            `${eosEndpoint}/v1/chain/get_table_rows`,
             {
               method: "post",
               body: JSON.stringify(tokensData),
@@ -96,7 +92,6 @@ const EosTransaction = (props) => {
         setUserBalances(userbal);
       }
     } catch (e) {
-      console.log("errr---", e);
       setUserBalances(userbal);
     }
   };
@@ -155,19 +150,14 @@ const EosTransaction = (props) => {
         setLoading(true);
         let account;
         let toAcc;
-        // if (token == "4,DAPP") {
-        //   account = "dappservices";
-        //   toAcc = contracts.EthContract;
-        // } else {
         account = contracts.TokenContract;
         toAcc = contracts.BRIDGE_CON;
-        // }
         const result = await wallet.eosApi.transact(
           {
             actions: [
               {
                 account: account,
-                name: "transfer",
+                name: Actions.Transfer,
                 authorization: [
                   {
                     actor: wallet.auth.accountName,
@@ -229,14 +219,8 @@ const EosTransaction = (props) => {
               </div>
               <div>
                 <Field as="select" name="token">
-                  {/* {tokenSymbol.map((sym) => (
-                    <option name="token" value={sym}>
-                      {sym.split(",")[1]}
-                    </option>
-                  ))} */}
                   <option value="6,USDC">USDC</option>
                   <option value="6,DAI">DAI</option>
-                  {/* <option value="4,DAPP">DAPP</option> */}
                 </Field>
               </div>
               <div>

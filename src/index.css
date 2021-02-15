@@ -30,11 +30,6 @@ code {
     margin-top: 20px;
 }
 
-
-/* .form-container div {
-width: 100%;
-} */
-
 button,
 input,
 select {
@@ -52,12 +47,6 @@ select {
 a {
     margin-top: 20px;
 }
-
-
-/* 
-p {
-padding: 10px;
-} */
 
 .container {
     width: 531px;
@@ -119,22 +108,8 @@ label input {
 
 .login {
     width: 100%;
-    /* display: inline-flex;
-    justify-content: space-between; */
     padding: 10px;
 }
-
-
-/* .loginbtn {
-    width: 100px;
-    margin: -2px;
-    padding: 3px;
-} */
-
-
-/* .registerbtn {
-    margin-top: 36px;
-} */
 
 .note {
     font-size: 13px;
@@ -176,13 +151,3 @@ label input {
     padding: 10px;
     text-align: center;
 }
-
-
-/* .pricebtn {
-    padding: 10 px;
-} */
-
-
-/* .userbalance {
-    display: inline-flex;
-} */
