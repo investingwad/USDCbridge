@@ -42,6 +42,9 @@ const Ethereum = () => {
   );
   const [loading, setLoading] = useState("");
   const [checked, setChecked] = useState(false);
+  const [errorMsg, seterrorMsg] = useState("");
+  const [successMsg, setsuccessMsg] = useState("");
+  const [approvedMsg, setapprovedMsg] = useState("");
 
   const sendToken = async (stakeAMount, tokenId) => {
     brigeContract.methods
@@ -54,8 +57,8 @@ const Ethereum = () => {
       })
       .on("receipt", (receipt) => {
         console.log("receipt sendToken", receipt);
-
         setLoading(false);
+        setsuccessMsg(receipt.transactionHash);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
         console.log("confirmationNumber sendToken", confirmationNumber);
@@ -64,6 +67,7 @@ const Ethereum = () => {
       .on("error", (error) => {
         console.log("error sendToken", error);
         setLoading(false);
+        seterrorMsg(error.message);
       });
   };
 
@@ -97,6 +101,7 @@ const Ethereum = () => {
       })
       .on("receipt", (receipt) => {
         console.log("receipt approve", receipt);
+        setapprovedMsg(receipt.transactionHash);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
         console.log("confirmationNumber approve", confirmationNumber);
@@ -105,6 +110,7 @@ const Ethereum = () => {
       .on("error", (error) => {
         console.log("error approve", error);
         setLoading(false);
+        seterrorMsg(error.message);
       })
       .then(() => {
         brigeContract.methods
@@ -117,8 +123,8 @@ const Ethereum = () => {
           })
           .on("receipt", (receipt) => {
             console.log("receipt sendToken", receipt);
-
             setLoading(false);
+            setsuccessMsg(receipt.transactionHash);
           })
           .on("confirmation", (confirmationNumber, receipt) => {
             console.log("confirmationNumber sendToken", confirmationNumber);
@@ -127,6 +133,7 @@ const Ethereum = () => {
           .on("error", (error) => {
             console.log("error sendToken", error);
             setLoading(false);
+            seterrorMsg(error.message);
           });
       });
   };
@@ -164,6 +171,18 @@ const Ethereum = () => {
       sendToken(stakeAMount, tokenId);
     } else {
       approveAndSendToken(stakeAMount, tokenId, token);
+    }
+  };
+
+  const closeTab = () => {
+    if (errorMsg) {
+      seterrorMsg("");
+    }
+    if (successMsg) {
+      setsuccessMsg("");
+    }
+    if (approvedMsg) {
+      setapprovedMsg("");
     }
   };
 
@@ -214,13 +233,56 @@ const Ethereum = () => {
         </div>
       </div>
 
-      <a
-        href={Docs.Ethdoc}
-        target="_blank"
-        rel="noreferrer"
-      >
+      <a href={Docs.Ethdoc} target="_blank" rel="noreferrer">
         Click here for help
       </a>
+
+      {errorMsg ? (
+        <div className="errorMsg">
+          <div className="close" onClick={closeTab}>
+            x
+          </div>
+          <div className="errmsg">Error</div>
+          <p className="error">{errorMsg}</p>
+        </div>
+      ) : successMsg ? (
+        <div className="successMsg">
+          <div className="close" onClick={closeTab}>
+            x
+          </div>
+          <div className="msg">Success</div>
+          {approvedMsg ? (
+            <>
+              <p className="para">
+                Check approved trx :
+                <a
+                  href={`https://etherscan.io/tx/${approvedMsg}`}
+                  className="link"
+                >
+                  {approvedMsg}
+                </a>
+              </p>
+
+              <p className="para">
+                Check deposit trx :
+                <a href={successMsg} className="link">
+                  {successMsg}
+                </a>
+              </p>
+            </>
+          ) : (
+            <>
+              <div>Check transaction :</div>
+              <a
+                href={`https://etherscan.io/tx/${successMsg}`}
+                className="link"
+              >
+                {successMsg}
+              </a>
+            </>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };
