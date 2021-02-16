@@ -44,6 +44,9 @@ const Ethereum = () => {
   );
   const [loading, setLoading] = useState("");
   const [checked, setChecked] = useState(false);
+  const [errorMsg, seterrorMsg] = useState("");
+  const [successMsg, setsuccessMsg] = useState("");
+  const [approvedMsg, setapprovedMsg] = useState("");
 
   const sendToken = async (stakeAMount, tokenId) => {
     console.log("inside send token");
@@ -58,7 +61,7 @@ const Ethereum = () => {
       })
       .on("receipt", (receipt) => {
         console.log("receipt sendToken", receipt);
-
+        setsuccessMsg(receipt.transactionHash);
         setLoading(false);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
@@ -67,6 +70,7 @@ const Ethereum = () => {
       })
       .on("error", (error) => {
         console.log("error sendToken", error);
+        seterrorMsg(error.message);
         setLoading(false);
       });
   };
@@ -101,14 +105,16 @@ const Ethereum = () => {
       })
       .on("receipt", (receipt) => {
         console.log("receipt approve", receipt);
+        setapprovedMsg(receipt.transactionHash);
       })
       .on("confirmation", (confirmationNumber, receipt) => {
         console.log("confirmationNumber approve", confirmationNumber);
         console.log("receipt approve", receipt);
       })
       .on("error", (error) => {
-        console.log("error approve", error);
+        console.log("error approve", error.message);
         setLoading(false);
+        seterrorMsg(error.message);
       })
       .then(() => {
         brigeContract.methods
@@ -121,7 +127,7 @@ const Ethereum = () => {
           })
           .on("receipt", (receipt) => {
             console.log("receipt sendToken", receipt);
-
+            setsuccessMsg(receipt.transactionHash);
             setLoading(false);
           })
           .on("confirmation", (confirmationNumber, receipt) => {
@@ -130,6 +136,7 @@ const Ethereum = () => {
           })
           .on("error", (error) => {
             console.log("error sendToken", error);
+            seterrorMsg(error.message);
             setLoading(false);
           });
       });
@@ -161,7 +168,7 @@ const Ethereum = () => {
         })
         .on("receipt", (receipt) => {
           console.log("receipt sendToken", receipt);
-
+          setsuccessMsg(receipt.transactionHash);
           setLoading(false);
         })
         .on("confirmation", (confirmationNumber, receipt) => {
@@ -170,6 +177,7 @@ const Ethereum = () => {
         })
         .on("error", (error) => {
           console.log("error sendToken", error);
+          seterrorMsg(error.message);
           setLoading(false);
         });
     } else {
@@ -198,6 +206,17 @@ const Ethereum = () => {
     }
   };
 
+  const closeTab = () => {
+    if (errorMsg) {
+      seterrorMsg("");
+    }
+    if (successMsg) {
+      setsuccessMsg("");
+    }
+    if (approvedMsg) {
+      setapprovedMsg("");
+    }
+  };
   console.log("checked ", checked);
 
   return (
@@ -257,6 +276,47 @@ const Ethereum = () => {
       >
         Click here for help
       </a>
+
+      {errorMsg ? (
+        <div className="errorMsg">
+          <div className="close" onClick={closeTab}>
+            x
+          </div>
+          <div className="errmsg">Error</div>
+          <p className="error">{errorMsg}</p>
+        </div>
+      ) : successMsg ? (
+        <div className="successMsg">
+          <div className="close" onClick={closeTab}>
+            x
+          </div>
+          <div className="msg">Success</div>
+          {approvedMsg ? (
+            <>
+              <p className="para">
+                Check approved trx :
+                <a href={`https://etherscan.io/tx/${approvedMsg}`} className="link">
+                  {approvedMsg}
+                </a>
+              </p>
+
+              <p className="para">
+                Check deposit trx :
+                <a href={successMsg} className="link">
+                  {successMsg}
+                </a>
+              </p>
+            </>
+          ) : (
+            <>
+              <div>Check transaction :</div>
+              <a href={`https://etherscan.io/tx/${successMsg}`} className="link">
+                {successMsg}
+              </a>
+            </>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };
