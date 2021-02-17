@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
 
 const initialValues = {
   value: "",
-  token: "6,EUSDC",
+  token: "4,USDC",
 };
 
 const EosTransaction = (props) => {
@@ -31,7 +31,7 @@ const EosTransaction = (props) => {
     (state) => state.address.ethWalletConnected
   );
   const [balances, setUserBalances] = useState([]);
-  const [tokenSymbol, setSymbols] = useState(["6,EUSDC"]);
+  const [tokenSymbol, setSymbols] = useState(["4,USDC"]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, seterrorMsg] = useState("");
   const [successMsg, setsuccessMsg] = useState("");
