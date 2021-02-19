@@ -15,7 +15,7 @@ const eos = EosApi(options);
 const schema = Yup.object().shape({
   value: Yup.number()
     .required("Enter value of token")
-    .test("lowAmount", `Should be greater than 0`, (val) => parseInt(val) > 0),
+    .test("lowAmount", `Should be greater than 0`, (val) => parseFloat(val) > 0),
   token: Yup.string().required("Select a token type"),
 });
 
@@ -141,6 +141,7 @@ const EosTransaction = (props) => {
   const handleTransfer = async (values) => {
     try {
       const { value, token } = values;
+      console.log('value', value , 'token', token)
       const wallet = WalletProvider.getWallet();
       if (!walletConnected) {
         seterrorMsg("Eos wallet is not connected");
@@ -167,8 +168,8 @@ const EosTransaction = (props) => {
                 data: {
                   from: wallet.auth.accountName,
                   to: toAcc,
-                  quantity: `${parseInt(value).toFixed(
-                    parseInt(token.split(",")[0])
+                  quantity: `${parseFloat(value).toFixed(
+                    parseFloat(token.split(",")[0])
                   )} ${token.split(",")[1]} `,
                   memo: `Transfer ${token.split(",")[1]} token`,
                 },
