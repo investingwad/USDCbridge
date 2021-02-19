@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
 
 const initialValues = {
   value: "",
-  token: "4,USDC",
+  token: "6,USDC",
 };
 
 const EosTransaction = (props) => {
@@ -35,8 +35,8 @@ const EosTransaction = (props) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, seterrorMsg] = useState("");
   const [successMsg, setsuccessMsg] = useState("");
-  const [usdcfee, setUsdcFee] = useState("0.0000 USDC");
-  const [daifee, setDaiFee] = useState("0.0000 DAI");
+  const [usdcfee, setUsdcFee] = useState("0.000000 USDC");
+  const [daifee, setDaiFee] = useState("0.000000 DAI");
 
   const { loggedIn } = props;
   const getTokens = async () => {
