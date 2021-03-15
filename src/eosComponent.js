@@ -7,8 +7,12 @@ import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "./logic/actions/actions";
 import { Ethlogin } from "./logic/actions/actions";
+import { Api, JsonRpc } from "eosjs";
+import { TextDecoder, TextEncoder } from "util";
+// import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig'
 //@ts-ignore
 import EosApi from "eosjs-api";
+import * as retry from "async-retry";
 import {
   Actions,
   contracts,
@@ -19,6 +23,7 @@ import {
   walletEndpoint,
 } from "./config";
 const ethereum_address = require("ethereum-address");
+const fetch = require("node-fetch");
 
 const updateSchema = Yup.object().shape({
   newaddress: Yup.string()
@@ -110,6 +115,7 @@ const Eos = (props) => {
   };
 
   const handleRegister = async (values) => {
+    let retrycount = 0;
     try {
       const eosAmount = 1;
       const wallet = WalletProvider.getWallet();
@@ -120,6 +126,7 @@ const Eos = (props) => {
         setregerrorMsg("Ethereum wallet is not connected");
       } else if (!!wallet) {
         setRegisterLoading(true);
+        let res;
         const result = await wallet.eosApi.transact(
           {
             actions: [
@@ -156,15 +163,57 @@ const Eos = (props) => {
             ],
           },
           {
-            broadcast: true,
+            broadcast: false,
             blocksBehind: 3,
             expireSeconds: 60,
           }
         );
-        if (result) {
+        console.log("result----", result);
+        let response = "";
+        try {
+          const api = new Api({
+            rpc: new JsonRpc(eosEndpoint, { fetch }),
+            signatureProvider: wallet.eosApi.signatureProvider,
+          });
+          await api.pushSignedTransaction(result);
+          await retry(
+            async (bail, num) => {
+              if (num < 4) {
+                await api.pushSignedTransaction(result);
+              } else {
+                try {
+                  res = await api.pushSignedTransaction(result);
+                  response = res;
+                } catch (e) {
+                  response = e.message;
+                }
+              }
+            },
+            {
+              retries: 3,
+            }
+          );
+        } catch (e) {
+          setregerrorMsg(e.message);
           setRegisterLoading(false);
-          setregsuccessMsg("Transaction Success");
-          setregerrorMsg("");
+        }
+        if (response) {
+          console.log("retrycount---", retrycount);
+          console.log("error--", response);
+          if (
+            response.includes(
+              "Account already registered. call update method to update ethaddress"
+            ) ||
+            response.includes("duplicate transaction") ||
+            response.includes("key already exists")
+          ) {
+            setRegisterLoading(false);
+            setregsuccessMsg("Transaction Success");
+            setregerrorMsg("");
+          } else {
+            setregerrorMsg(response);
+            setRegisterLoading(false);
+          }
         }
       } else {
         setRegisterLoading(false);
@@ -187,6 +236,7 @@ const Eos = (props) => {
         seterrorMsg("Ethereum wallet is not connected");
       } else if (!!wallet) {
         setUpdateLoading(true);
+        let res;
         const result = await wallet.eosApi.transact(
           {
             actions: [
@@ -223,15 +273,56 @@ const Eos = (props) => {
             ],
           },
           {
-            broadcast: true,
+            broadcast: false,
             blocksBehind: 3,
             expireSeconds: 60,
           }
         );
-        if (result) {
+        console.log("result----", result);
+        let response = "";
+        try {
+          const api = new Api({
+            rpc: new JsonRpc(eosEndpoint, { fetch }),
+            signatureProvider: wallet.eosApi.signatureProvider,
+          });
+          await api.pushSignedTransaction(result);
+          await retry(
+            async (bail, num) => {
+              if (num < 4) {
+                await api.pushSignedTransaction(result);
+              } else {
+                try {
+                  res = await api.pushSignedTransaction(result);
+                  response = res;
+                } catch (e) {
+                  response = e.message;
+                }
+              }
+            },
+            {
+              retries: 3,
+            }
+          );
+        } catch (e) {
+          seterrorMsg(e.message);
           setUpdateLoading(false);
-          setsuccessMsg("Transaction Success");
-          seterrorMsg("");
+        }
+        if (response) {
+          console.log("error--", response);
+          if (
+            response.includes(
+              "Account already registered. call update method to update ethaddress"
+            ) ||
+            response.includes("duplicate transaction") ||
+            response.includes("key already exists")
+          ) {
+            setUpdateLoading(false);
+            setsuccessMsg("Transaction Success");
+            seterrorMsg("");
+          } else {
+            seterrorMsg(response);
+            setUpdateLoading(false);
+          }
         }
       } else {
         setUpdateLoading(false);
@@ -252,6 +343,7 @@ const Eos = (props) => {
       } else if (!ethwalletConnected) {
         seterrorMesg("Ethereum wallet is not connected");
       } else if (!!wallet) {
+        console.log("wallet---", wallet);
         setGasLoading(true);
         const result = await wallet.eosApi.transact(
           {
@@ -270,7 +362,7 @@ const Eos = (props) => {
             ],
           },
           {
-            broadcast: true,
+            broadcast: false,
             blocksBehind: 3,
             expireSeconds: 60,
           }
@@ -446,11 +538,7 @@ const Eos = (props) => {
             </Formik>
           </div>
         </div>
-        <a
-          href={Docs.Eosdoc}
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={Docs.Eosdoc} target="_blank" rel="noreferrer">
           Click here for help
         </a>
         {regerrorMsg ? (
