@@ -1,4 +1,4 @@
-export const usdcAbi = [
+export const tokenAbi = [
   {
     inputs: [
       { internalType: "uint256", name: "_initialAmount", type: "uint256" },
@@ -162,6 +162,219 @@ export const bridgeAbi = [
   {
     anonymous: false,
     inputs: [
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "reason",
+        type: "bytes",
+      },
+    ],
+    name: "Failure",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "reason",
+        type: "bytes",
+      },
+    ],
+    name: "Receipt",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "reason",
+        type: "bytes",
+      },
+    ],
+    name: "Refund",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_owners",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256",
+        name: "required",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "required_secure",
+        type: "uint256",
+      },
+    ],
+    name: "modifyConsensus",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "_message",
+        type: "bytes",
+      },
+    ],
+    name: "pushInboundMessage",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    stateMutability: "payable",
+    type: "receive",
+    payable: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "_owners",
+        type: "address[]",
+      },
+      {
+        internalType: "uint8",
+        name: "_required",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "_required_secure",
+        type: "uint8",
+      },
+      {
+        internalType: "address[]",
+        name: "_token_contracts",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_EOS_precision",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_ethereum_precision",
+        type: "uint256[]",
+      },
+      {
+        internalType: "address",
+        name: "_uniswapRouter",
+        type: "address",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_max_mint_period_amount",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_max_mint_period",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_max_mint_allowed",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256",
+        name: "_min_eth_required",
+        type: "uint256",
+      },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "sendToken",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "claimGas",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+    payable: true,
+  },
+];
+
+export const dappBrigeAbi = [
+  {
+    anonymous: false,
+    inputs: [
       { indexed: false, internalType: "bytes", name: "reason", type: "bytes" },
     ],
     name: "Failure",
@@ -216,16 +429,6 @@ export const bridgeAbi = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "account", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-    ],
-    name: "approvePoolBalance",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "available_batch_id",
     outputs: [{ internalType: "uint64", name: "", type: "uint64" }],
@@ -267,43 +470,27 @@ export const bridgeAbi = [
   },
   {
     inputs: [],
-    name: "counter1",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "configs",
+    outputs: [
+      { internalType: "uint256", name: "max_mint_allowed", type: "uint256" },
+      {
+        internalType: "uint256",
+        name: "max_mint_period_amount",
+        type: "uint256",
+      },
+      { internalType: "uint256", name: "max_mint_period", type: "uint256" },
+      { internalType: "uint256", name: "EOS_precision", type: "uint256" },
+      { internalType: "uint256", name: "ethereum_precision", type: "uint256" },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "counter2",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "counter3",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "counter4",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "depositors",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ internalType: "address", name: "", type: "address" }],
-    name: "dsp_gas_used",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    name: "eosToEth",
+    outputs: [
+      { internalType: "contract EosToEthTokenpeg", name: "", type: "address" },
+    ],
     stateMutability: "view",
     type: "function",
   },
@@ -311,6 +498,13 @@ export const bridgeAbi = [
     inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     name: "executedMsg",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "", type: "address" }],
+    name: "gas_used",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
@@ -351,26 +545,17 @@ export const bridgeAbi = [
       { internalType: "uint8", name: "_required", type: "uint8" },
       { internalType: "uint8", name: "_required_secure", type: "uint8" },
       { internalType: "address", name: "_token_contract", type: "address" },
-      {
-        internalType: "address",
-        name: "_uniswapRouterContractAddress",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_max_withdrawal_period_amount",
-        type: "uint256",
-      },
+      { internalType: "address", name: "_uniswapRouter", type: "address" },
+      { internalType: "address", name: "_eosToEth", type: "address" },
+      { internalType: "uint256", name: "_EOS_precision", type: "uint256" },
+      { internalType: "uint256", name: "_ethereum_precision", type: "uint256" },
       {
         internalType: "uint256",
-        name: "_max_withdrawal_period",
+        name: "_max_mint_period_amount",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "_max_withdrawal_allowed",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "_max_mint_period", type: "uint256" },
+      { internalType: "uint256", name: "_max_mint_allowed", type: "uint256" },
       { internalType: "uint256", name: "_min_eth_required", type: "uint256" },
     ],
     name: "initialize",
@@ -394,7 +579,7 @@ export const bridgeAbi = [
   },
   {
     inputs: [],
-    name: "last_no_of_confirmed",
+    name: "last_mint_time",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -408,20 +593,6 @@ export const bridgeAbi = [
   },
   {
     inputs: [],
-    name: "last_type_id",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "last_withdrawal_time",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "locked",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
@@ -429,21 +600,14 @@ export const bridgeAbi = [
   },
   {
     inputs: [],
-    name: "max_withdrawal_allowed",
+    name: "max_mint_period",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "max_withdrawal_period",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "max_withdrawal_period_amount",
+    name: "max_mint_period_amount",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -451,20 +615,6 @@ export const bridgeAbi = [
   {
     inputs: [],
     name: "min_eth_required",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "mint_tokens_enter",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "mint_tokens_exist",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -481,13 +631,27 @@ export const bridgeAbi = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address[]", name: "_owners", type: "address[]" },
-      { internalType: "uint256", name: "required", type: "uint256" },
+    inputs: [],
+    name: "msg_types",
+    outputs: [
+      { internalType: "uint64", name: "address_registered", type: "uint64" },
+      { internalType: "uint64", name: "address_modified", type: "uint64" },
+      { internalType: "uint64", name: "mint", type: "uint64" },
+      { internalType: "uint64", name: "deposit", type: "uint64" },
+      { internalType: "uint64", name: "lock", type: "uint64" },
+      { internalType: "uint64", name: "max_mint", type: "uint64" },
+      { internalType: "uint64", name: "min_eth", type: "uint64" },
+      { internalType: "uint64", name: "low_eth", type: "uint64" },
+      { internalType: "uint64", name: "eth_received", type: "uint64" },
+      { internalType: "uint64", name: "swap", type: "uint64" },
+      {
+        internalType: "uint64",
+        name: "max_mint_period_amount",
+        type: "uint64",
+      },
+      { internalType: "uint64", name: "max_mint_period", type: "uint64" },
     ],
-    name: "modifyConsensusByOwner",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -500,13 +664,6 @@ export const bridgeAbi = [
   {
     inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     name: "numOfConfirmed",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "on_message_counter",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -533,20 +690,6 @@ export const bridgeAbi = [
     name: "pushInboundMessage",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "push_inbound_counter",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "push_receipt_counter",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -589,14 +732,14 @@ export const bridgeAbi = [
   },
   {
     inputs: [],
-    name: "total_period_withdrawal",
+    name: "total_period_mint",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "uniswapRouterContract",
+    name: "uniswapRouter",
     outputs: [
       { internalType: "contract UniswapV2Router02", name: "", type: "address" },
     ],
@@ -608,4 +751,8 @@ export const bridgeAbi = [
 
 export const usdcAddress = "0x0D9C8723B343A8368BebE0B5E89273fF8D712e3C";
 
-export const bridgeAddress = "0xb151141C40146362356d65B3C7a587551f81c5B6";
+export const bridgeAddress = "0xAf11176d5D03d8587CDaF884c2f800AaE82C9aD2";
+
+export const daiAddress = "0xaD6D458402F60fD3Bd25163575031ACDce07538D";
+
+export const dappBrigeAddress = "0xA80bbbe16EfF95c94674D4DdD2410BF3365d5b14";

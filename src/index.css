@@ -18,7 +18,7 @@ code {
 }
 
 .form-container {
-    width: 30%;
+    width: 20%;
     margin: 0 auto;
     padding: 30px 30px 30px 30px;
     display: flex;
@@ -32,7 +32,7 @@ code {
 
 
 /* .form-container div {
-    width: 100%;
+width: 100%;
 } */
 
 button,
@@ -44,9 +44,9 @@ select {
 }
 
 .submit-btn {
-    margin-top: 60px;
     width: 100%;
     padding: 5px;
+    margin-top: 20px;
 }
 
 a {
@@ -56,7 +56,7 @@ a {
 
 /* 
 p {
-    padding: 10px;
+padding: 10px;
 } */
 
 .container {
@@ -80,6 +80,28 @@ p {
     }
 }
 
+label {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+a,
+label {
+    margin-top: 20px;
+}
+
+label span {
+    margin-left: 10px;
+    user-select: none;
+}
+
+label input {
+    width: unset;
+    padding: 0;
+    margin: 0;
+}
+
 .modalcontainer {
     position: absolute;
     top: 0;
@@ -97,37 +119,40 @@ p {
 
 .login {
     width: 100%;
-    display: inline-flex;
-    justify-content: space-between;
+    /* display: inline-flex;
+    justify-content: space-between; */
     padding: 10px;
 }
 
-.loginbtn {
+
+/* .loginbtn {
     width: 100px;
     margin: -2px;
     padding: 3px;
-}
+} */
 
 .registerbtn {
     margin-top: 36px;
 }
 
 .note {
-    font-size: 14px;
-    margin-top: 34px;
+    font-size: 13px;
+    margin-top: 10px;
     padding: 5px;
 }
 
 .error {
     padding: 0px;
-    color: red;
-    margin-top: 20px;
+    color: #e81d19;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .success {
     padding: 0px;
-    color: green;
+    color: #2c662d;
     margin-top: 20px;
+    width: 100%;
 }
 
 .sendbtn {
@@ -135,9 +160,102 @@ p {
 }
 
 .register {
-    width: 48%;
+    width: 100%;
 }
 
 .tokenform {
     width: 100%;
 }
+
+.text {
+    padding: 10px;
+    text-align: center;
+}
+
+.link {
+    color: #4183c4;
+    text-decoration: none;
+    background-color: transparent;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.close {
+    position: absolute;
+    right: 0.7em;
+    margin-top: -6px;
+    /* color: #1a531b; */
+}
+
+.msg {
+    color: #1a531b;
+    font-size: 1.14285714em;
+    display: block;
+    font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    margin: -.14285714em 0 0 0;
+    font-size: 1em;
+}
+
+.errmsg {
+    color: #e81411;
+    font-size: 1.14285714em;
+    display: block;
+    font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    margin: -.14285714em 0 0 0;
+    font-size: 1em;
+}
+
+.successMsg {
+    position: relative;
+    min-height: 1em;
+    margin: 1em 0;
+    padding: 1em 1.5em;
+    line-height: 1.4285em;
+    color: rgba(0, 0, 0, .87);
+    border-radius: .28571429rem;
+    border: 1px solid #2c662d;
+    width: 100%;
+}
+
+.errorMsg {
+    position: relative;
+    min-height: 1em;
+    margin: 1em 0;
+    padding: 1em 1.5em;
+    line-height: 1.4285em;
+    color: #e81d19;
+    border-radius: .28571429rem;
+    border: 1px solid #e81d19;
+    width: 100%;
+}
+
+.para {
+    opacity: .85;
+    margin: .75em 0;
+    margin-top: .25em;
+    margin-bottom: 0;
+    line-height: 1.4285em;
+    font-size: 0.9em;
+}
+
+
+/* .userbalance {
+    display: inline-flex;
+} */
+
+a {
+    opacity: .85;
+    margin: .75em 0;
+    margin-top: .25em;
+    margin-bottom: 0;
+    line-height: 1.4285em;
+}
+
+
+/* .userbalance {
+    display: inline-flex;
+} */

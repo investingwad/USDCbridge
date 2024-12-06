@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Ethereum from './ethComponent'
-import Eos from './eosComponent'
 import reportWebVitals from './reportWebVitals';
+import App from './App'
+import store from './logic/reducers'
+import { Provider } from 'react-redux'
 
 ReactDOM.render(
    <React.StrictMode >
-    <Ethereum/> 
-    <Eos/>
+    <Provider store={store}>
+      <App />
+    </Provider>
     </React.StrictMode>,
     document.getElementById('root')
 );
